@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查理·芒格多元思维模型 - 智能分析助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .serif {
+            font-family: 'Noto Serif SC', serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        .card-glow {
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.1);
+        }
+        .model-card {
+            transition: all 0.3s ease;
+        }
+        .model-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        .typing-indicator span {
+            animation: blink 1.4s infinite;
+            animation-fill-mode: both;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink {
+            0% { opacity: 0.1; }
+            20% { opacity: 1; }
+            100% { opacity: 0.1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .pulse-border {
+            animation: pulseBorder 2s infinite;
+        }
+        @keyframes pulseBorder {
+            0%, 100% { border-color: rgba(99, 102, 241, 0.3); }
+            50% { border-color: rgba(99, 102, 241, 0.8); }
+        }
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+        .weight-bar {
+            transition: width 0.5s ease-out;
+        }
+        .category-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .discipline-tag {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-gray-100">
+    <!-- Header -->
+    <header class="py-8 px-4 border-b border-indigo-900/30">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold serif bg-gradient-to-r from-indigo-300 via-purple-300 to-pink-300 bg-clip-text text-transparent mb-3">
+                查理·芒格多元思维模型
+            </h1>
+            <p class="text-gray-400 text-lg">"手里拿着锤子的人，看什么都像钉子" —— 用多元思维模型武装你的大脑</p>
+            <div class="flex justify-center gap-2 mt-4 flex-wrap">
+                <span class="text-xs px-3 py-1 rounded-full bg-indigo-900/50 text-indigo-300">历史学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-purple-900/50 text-purple-300">心理学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-pink-900/50 text-pink-300">生理学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-cyan-900/50 text-cyan-300">数学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-green-900/50 text-green-300">工程学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-emerald-900/50 text-emerald-300">生物学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-blue-900/50 text-blue-300">物理学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-orange-900/50 text-orange-300">化学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-rose-900/50 text-rose-300">统计学</span>
+                <span class="text-xs px-3 py-1 rounded-full bg-amber-900/50 text-amber-300">经济学</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Input Section -->
+        <section class="mb-12">
+            <div class="bg-slate-800/50 rounded-2xl p-6 md:p-8 card-glow border border-indigo-900/30">
+                <h2 class="text-xl font-semibold mb-4 text-indigo-300">🤔 描述你想分析的事情</h2>
+                <div class="flex flex-col gap-4">
+                    <textarea 
+                        id="userInput" 
+                        placeholder="例如：我想跳槽到一家创业公司，但担心风险太大..."
+                        class="w-full h-32 bg-slate-900/50 border-2 border-indigo-900/50 rounded-xl p-4 text-gray-100 placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none pulse-border"
+                    ></textarea>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-gray-500">
+                            💡 系统将从10大学科维度 + 相关模型进行综合分析
+                        </p>
+                        <button 
+                            id="analyzeBtn"
+                            onclick="analyzeInput()"
+                            class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+                        >
+                            <span id="btnText">开始分析</span>
+                            <span id="loadingIndicator" class="hidden typing-indicator">
+                                分析中<span>.</span><span>.</span><span>.</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="hidden mb-12">
+            <!-- Summary Stats -->
+            <div id="summaryStats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 fade-in">
+                <!-- Stats will be inserted here -->
+            </div>
+
+            <!-- Model Cards by Category -->
+            <div id="modelCardsContainer" class="space-y-6">
+                <!-- Model cards grouped by discipline will be inserted here -->
+            </div>
+            
+            <!-- Analysis Section -->
+            <div id="analysisSection" class="mt-8 bg-slate-800/50 rounded-2xl p-6 md:p-8 card-glow border border-indigo-900/30 fade-in">
+                <h3 class="text-xl font-semibold mb-4 text-indigo-300">💡 综合分析与建议</h3>
+                <div id="analysisContent" class="text-gray-300 leading-relaxed space-y-4">
+                    <!-- Analysis will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- All Models Section -->
+        <section class="mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold serif text-indigo-300">📚 全部思维模型 (100个)</h2>
+                <button 
+                    onclick="toggleAllModels()"
+                    id="toggleBtn"
+                    class="text-indigo-400 hover:text-indigo-300 transition-colors"
+                >
+                    展开全部 ▼
+                </button>
+            </div>
+            <div id="allModelsGrid" class="hidden grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <!-- All model tags will be inserted here -->
+            </div>
+        </section>
+
+        <!-- Footer Stats -->
+        <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20">
+                <div class="text-2xl font-bold text-indigo-400">10</div>
+                <div class="text-gray-400 text-sm">学科维度</div>
+            </div>
+            <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20">
+                <div class="text-2xl font-bold text-purple-400">100</div>
+                <div class="text-gray-400 text-sm">思维模型</div>
+            </div>
+            <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20">
+                <div class="text-2xl font-bold text-pink-400">历史学</div>
+                <div class="text-gray-400 text-sm">时间维度</div>
+            </div>
+            <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20">
+                <div class="text-2xl font-bold text-cyan-400">跨学科</div>
+                <div class="text-gray-400 text-sm">综合分析</div>
+            </div>
+            <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20">
+                <div class="text-2xl font-bold text-amber-400">Charlie</div>
+                <div class="text-gray-400 text-sm">芒格智慧</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Model Detail Modal -->
+    <div id="modelModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-indigo-900/50 shadow-2xl">
+            <div id="modalContent" class="p-6">
+                <!-- Modal content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-indigo-900/30 py-8 px-4 mt-8">
+        <div class="max-w-6xl mx-auto text-center text-gray-500 text-sm">
+            <p>致敬查理·芒格（1924-2023）—— 终身学习的智者</p>
+            <p class="mt-2">本工具基于芒格的多元思维模型理论构建，涵盖10大学科维度的智慧结晶</p>
+        </div>
+    </footer>
+
+    <script>
+        // 十大学科颜色配置
+        const disciplineColors = {
+            '历史学': { bg: 'bg-indigo-900/50', text: 'text-indigo-300', gradient: 'from-indigo-500 to-indigo-600', hex: '#6366f1' },
+            '心理学': { bg: 'bg-purple-900/50', text: 'text-purple-300', gradient: 'from-purple-500 to-purple-600', hex: '#a855f7' },
+            '生理学': { bg: 'bg-pink-900/50', text: 'text-pink-300', gradient: 'from-pink-500 to-pink-600', hex: '#ec4899' },
+            '数学': { bg: 'bg-cyan-900/50', text: 'text-cyan-300', gradient: 'from-cyan-500 to-cyan-600', hex: '#06b6d4' },
+            '工程学': { bg: 'bg-green-900/50', text: 'text-green-300', gradient: 'from-green-500 to-green-600', hex: '#22c55e' },
+            '生物学': { bg: 'bg-emerald-900/50', text: 'text-emerald-300', gradient: 'from-emerald-500 to-emerald-600', hex: '#10b981' },
+            '物理学': { bg: 'bg-blue-900/50', text: 'text-blue-300', gradient: 'from-blue-500 to-blue-600', hex: '#3b82f6' },
+            '化学': { bg: 'bg-orange-900/50', text: 'text-orange-300', gradient: 'from-orange-500 to-orange-600', hex: '#f97316' },
+            '统计学': { bg: 'bg-rose-900/50', text: 'text-rose-300', gradient: 'from-rose-500 to-rose-600', hex: '#f43f5e' },
+            '经济学': { bg: 'bg-amber-900/50', text: 'text-amber-300', gradient: 'from-amber-500 to-amber-600', hex: '#f59e0b' }
+        };
+
+        // 100个查理芒格思维模型数据库 - 按10大学科分类
+        const models = [
+            // ==================== 历史学 (1-10) ====================
+            {
+                id: 1,
+                name: "路径依赖",
+                discipline: "历史学",
+                coreConcept: "历史选择影响未来选择，即使最初的选择并非最优。过去的决策、事件和制度安排会形成惯性，限制未来的选择空间。",
+                description: "人们倾向于沿着已有的路径前进，因为改变需要付出巨大的转换成本。这种依赖可能是技术上的（如QWERTY键盘）、制度上的或心理上的。",
+                example: "QWERTY键盘布局最初是为了防止打字机卡键而设计，虽然不是最优布局，但已被锁定，很难被DVORAK等更高效的布局取代。",
+                application: "在做决策时，要考虑历史路径的影响，评估打破路径依赖的成本与收益。同时要有意识地避免形成不利于未来发展的路径依赖。",
+                keywords: ["历史", "选择", "习惯", "标准", "传统", "改变", "惯例", "锁定", "惯性", "过去"],
+                relatedModels: [40, 85]
+            },
+            {
+                id: 2,
+                name: "周期律",
+                discipline: "历史学",
+                coreConcept: "历史往往呈现周期性规律，繁荣与萧条、和平与战争、创新与停滞交替出现。理解周期有助于预测未来趋势。",
+                description: "从古至今，人类社会的发展并非线性前进，而是呈现周期性波动。经济周期、政治周期、技术周期交织互动，形成历史的韵律。",
+                example: "荷兰郁金香泡沫、英国南海泡沫、2000年互联网泡沫、2008年金融危机——投机泡沫在历史上反复出现，遵循相似的模式。",
+                application: "在投资和决策时，要识别当前所处的周期位置，顺势而为，在周期转折点保持警惕。历史不会简单重复，但会押韵。",
+                keywords: ["周期", "循环", "规律", "趋势", "预测", "历史", "泡沫", "危机", "繁荣", "萧条"],
+                relatedModels: [82, 38]
+            },
+            {
+                id: 3,
+                name: "历史重演",
+                discipline: "历史学",
+                coreConcept: "历史不会重复自己，但会押韵。相似的情境会导致相似的结果，理解历史可以避免重蹈覆辙。",
+                description: "人类行为的基本模式在历史上反复出现。虽然具体细节不同，但贪婪、恐惧、从众等基本人性驱动的模式会以不同形式重现。",
+                example: "每个时代的'这次不一样'往往是最危险的话——从1929年大萧条到2008年金融危机，人们总以为新时代已经改变了旧规则。",
+                application: "学习历史案例，识别当前情境与历史案例的相似之处，从历史中汲取智慧。但也要注意区分表面的相似与本质的差异。",
+                keywords: ["历史", "经验", "教训", "学习", "案例", "模式", "重复", "相似", "智慧"],
+                relatedModels: [2, 7]
+            },
+            {
+                id: 4,
+                name: "文明兴衰",
+                discipline: "历史学",
+                coreConcept: "文明、帝国和企业都有生命周期，经历兴起、繁荣、衰落的过程。理解兴衰规律有助于把握大趋势。",
+                description: "从罗马帝国到大英帝国，从柯达到诺基亚，历史表明没有任何强大的实体能够永存。内部腐朽和外部冲击共同导致衰落。",
+                example: "罗马帝国的衰落经历了数百年，内部腐败、经济衰退、外部入侵共同作用。现代企业如柯达因未能适应数码时代而衰落。",
+                application: "在评估国家、企业或组织时，要关注其生命周期的位置，识别衰落或复兴的信号，不要迷信'大到不能倒'。",
+                keywords: ["文明", "帝国", "企业", "兴衰", "生命周期", "变革", "衰落", "崛起"],
+                relatedModels: [76, 79]
+            },
+            {
+                id: 5,
+                name: "意外后果定律",
+                discipline: "历史学",
+                coreConcept: "历史上的重大干预往往产生预料之外的结果，好的初衷可能带来坏的结局，这是因为复杂系统的非预期互动。",
+                description: "决策者在采取行动时，往往只能预见直接和近期的后果，而间接和长期的后果难以预料，有时甚至与初衷相悖。",
+                example: "美国禁酒令原本要减少犯罪和酗酒，结果反而催生了黑帮和有组织犯罪；引入外来物种控制害虫，却导致生态灾难。",
+                application: "在做重大决策时，要进行事前验尸分析，预想可能的各种后果，采取小规模试验，保留纠错空间。",
+                keywords: ["后果", "意外", "政策", "干预", "副作用", "复杂", "系统", "决策"],
+                relatedModels: [37, 43]
+            },
+            {
+                id: 6,
+                name: "历史人物镜像",
+                discipline: "历史学",
+                coreConcept: "历史人物的成败得失可以作为我们决策的镜像，通过研究他们的经历来反思自己的处境。",
+                description: "历史提供了一面镜子，让我们看到在类似情境下，不同的人做出了怎样的选择，以及这些选择的后果。",
+                example: "研究林肯的领导力如何在危机中成长，分析拿破仑的战略失误，从他们的经历中学习决策智慧。",
+                application: "当面临重要决策时，寻找历史上类似情境的人物，研究他们的选择和后果，作为自己决策的参考。",
+                keywords: ["人物", "学习", "榜样", "领导力", "决策", "成功", "失败", "经历"],
+                relatedModels: [3, 92]
+            },
+            {
+                id: 7,
+                name: "后见之明偏差",
+                discipline: "历史学",
+                coreConcept: "事后看来，历史事件似乎都是可以预测的，但当时充满了不确定性。这种偏差让我们高估自己的预测能力。",
+                description: "当我们知道结果后，会自动构建一个因果叙事，让结果显得顺理成章。这种认知偏差让我们难以从历史中学到正确的教训。",
+                example: "2008年金融危机后，很多人声称'早就看到问题了'，但危机前很少有人准确预测到具体时间和规模。",
+                application: "在分析历史事件时，要设身处地回到当时的情境，考虑当时的信息和不确定性，避免用后见之明贬低前人的智慧。",
+                keywords: ["预测", "事后", "判断", "结果", "后悔", "预料", "聪明", "叙事"],
+                relatedModels: [15, 3]
+            },
+            {
+                id: 8,
+                name: "叙事谬误",
+                discipline: "历史学",
+                coreConcept: "人们倾向于为复杂的历史事件编织简单的故事，赋予其因果逻辑，但真实的历史往往更加复杂和随机。",
+                description: "历史教科书中的故事往往清晰明了，但真实的历史充满了偶然、混沌和不确定性。简单的叙事会误导我们对世界的理解。",
+                example: "一战爆发的'原因'被简化为斐迪南大公遇刺，实际上是一系列复杂的联盟、误解和偶然因素共同作用。",
+                application: "在理解历史和当前事件时，要警惕过于简洁的叙事，接受世界的复杂性和不确定性，避免过度简化。",
+                keywords: ["故事", "因果", "解释", "历史", "规律", "理解", "逻辑", "意义", "复杂"],
+                relatedModels: [15, 7]
+            },
+            {
+                id: 9,
+                name: "时代的局限性",
+                discipline: "历史学",
+                coreConcept: "每个时代都有其认知边界，当时人难以超越。理解历史要考虑时代背景，不要用今天的标准评判过去。",
+                description: "人们的思想和行为受到时代环境的塑造，包括知识水平、技术条件、社会规范等。所谓的'常识'在不同时代完全不同。",
+                example: "过去认为地球是宇宙中心、放血可以治病，这些在当时都是'科学共识'。今天我们的一些信念，在未来也可能被证明是错误的。",
+                application: "在阅读历史和分析当下时，要意识到自己的认知也可能受时代局限，保持谦逊和开放心态。",
+                keywords: ["时代", "局限", "认知", "背景", "环境", "条件", "标准", "历史"],
+                relatedModels: [87, 8]
+            },
+            {
+                id: 10,
+                name: "大数法则的历史应用",
+                discipline: "历史学",
+                coreConcept: "个体事件难以预测，但大量历史事件的统计规律可以把握。历史的'大趋势'比具体事件更具参考价值。",
+                description: "虽然具体的历史转折点难以预测，但从统计学角度，某些趋势（如技术进步、人口变化）具有较大的确定性。",
+                example: "无法预测哪支股票明天涨跌，但长期来看股市整体向上；无法预测哪个朝代何时灭亡，但王朝更替是历史的常态。",
+                application: "在决策时，不要过度依赖对具体事件的预测，而要关注大趋势和统计规律，把握大概率事件。",
+                keywords: ["统计", "趋势", "预测", "规律", "概率", "大数", "历史", "长期"],
+                relatedModels: [91, 68]
+            },
+
+            // ==================== 心理学 (11-25) ====================
+            {
+                id: 11,
+                name: "确认偏误",
+                discipline: "心理学",
+                coreConcept: "人们倾向于寻找、解释和记忆那些能证实自己已有信念的信息，而忽略相反的证据。这是最普遍的认知偏差之一。",
+                description: "当我们已经形成某种观点后，大脑会自动过滤掉与之矛盾的信息，强化原有的信念。这种偏差会导致错误决策不断积累。",
+                example: "投资者只关注支持自己持有股票的利好消息，忽略负面信息；政治立场不同的人看同一条新闻会得出完全相反的结论。",
+                application: "在重要决策前，主动寻找反对意见，邀请不同观点的人参与讨论，进行'魔鬼辩护'式的反向思考。",
+                keywords: ["决策", "判断", "信念", "偏见", "观点", "投资", "选择", "相信", "证据", "证明"],
+                relatedModels: [1, 46]
+            },
+            {
+                id: 12,
+                name: "锚定效应",
+                discipline: "心理学",
+                coreConcept: "人们在做决定时过度依赖获得的第一条信息（锚点），后续判断都会围绕这个锚点进行调整，往往调整不足。",
+                description: "初始信息如同抛下的锚，将思维固定在某个范围内。即使是无关的锚点，也会显著影响最终判断。",
+                example: "谈判时第一个报价会设定谈判的基调；商品原价划掉后的折扣价让消费者觉得便宜，即使折扣后仍高于合理价格。",
+                application: "在谈判中争取先出价设定锚点；在决策中要意识到锚点的存在，尝试从多个角度重新评估。",
+                keywords: ["价格", "谈判", "销售", "估值", "第一印象", "报价", "买卖", "交易", "起始"],
+                relatedModels: [12, 2]
+            },
+            {
+                id: 13,
+                name: "损失厌恶",
+                discipline: "心理学",
+                coreConcept: "人们对损失的痛苦感远大于同等收益的快乐感，损失带来的痛苦约为收益快乐的2-2.5倍。这是前景理论的核心发现。",
+                description: "这种不对称性源于进化——在野外环境中，避免死亡比获得食物更重要。现代人继承了这种心理机制。",
+                example: "宁愿确定获得900元，也不愿赌一把有90%机会获得1000元；投资者过早卖出盈利股票，却死抱亏损股票不放。",
+                application: "在设计和沟通中，将选项呈现为'避免损失'而非'获得收益'更容易说服人们。在个人决策中，要意识到这种偏差可能导致过度保守。",
+                keywords: ["风险", "收益", "投资", "选择", "决策", "损失", "获利", "赌博", "痛苦", "快乐"],
+                relatedModels: [9, 63]
+            },
+            {
+                id: 14,
+                name: "可得性启发",
+                discipline: "心理学",
+                coreConcept: "人们判断事件概率时，依赖能想到的例子或记忆的容易程度，而非真实的统计数据。生动、近期的记忆影响更大。",
+                description: "大脑使用'容易想起'作为'经常发生'的替代指标，这导致对戏剧性但罕见事件（如空难）的高估，对常见但低调事件（如车祸）的低估。",
+                example: "刚看到飞机失事新闻就觉得坐飞机危险；因为媒体报道犯罪新闻而认为犯罪率上升，实际上可能在下降。",
+                application: "在做风险评估时，要查阅客观数据而非依赖印象；在沟通中，用生动的故事比统计数据更有效。",
+                keywords: ["风险", "概率", "记忆", "新闻", "恐惧", "印象", "媒体", "事件", "评估"],
+                relatedModels: [5, 68]
+            },
+            {
+                id: 15,
+                name: "认知失调",
+                discipline: "心理学",
+                coreConcept: "当人们的行为与信念冲突时，会产生心理不适，人们倾向于改变信念来合理化行为，而非改变行为。",
+                description: "人脑追求认知一致性。当现实与预期不符时，人们会创造各种解释来减少内心冲突，即使这些解释是自欺欺人的。",
+                example: "吸烟者说服自己'吸烟没那么有害'或'我认识的吸烟者活到90岁'；买贵了东西后说服自己'质量更好'。",
+                application: "注意观察自己的合理化倾向；当发现自己在为错误找借口时，停下来反思真正的原因。",
+                keywords: ["矛盾", "认知", "改变", "冲突", "信念", "行为", "自我", "合理化", "借口"],
+                relatedModels: [52, 11]
+            },
+            {
+                id: 16,
+                name: "社会认同",
+                discipline: "心理学",
+                coreConcept: "人们根据所属群体的行为和标准来定义自己，并倾向于模仿群体成员的行为。这是归属需求和从众心理的体现。",
+                description: "我们都是社会性动物，他人的行为为我们提供了'正确'行动的参考。在不确定情境下，我们会观察别人怎么做。",
+                example: "粉丝认同某个偶像群体，会模仿群体的穿着和行为；餐厅人越多，路过的人越想进去。",
+                application: "在营销中展示'大多数人选择'或'同类人群都在用'；个人决策时，要有意识地选择影响的群体。",
+                keywords: ["群体", "认同", "归属", "身份", "社交", "品牌", "粉丝", "社区", "模仿"],
+                relatedModels: [47, 57]
+            },
+            {
+                id: 17,
+                name: "互惠原则",
+                discipline: "心理学",
+                coreConcept: "人们觉得有义务回报他人的善意或帮助，这是一种根深蒂固的社会规范。'投桃报李'是跨文化的普世法则。",
+                description: "当别人给了我们好处，我们会产生负债感，想要回报。这种心理使得先给予后索取成为一种强大的影响策略。",
+                example: "先送免费样品，客户更愿意购买；先帮助别人，以后求助时更容易获得帮助。",
+                application: "在人际关系和商业中，先主动给予；在接受恩惠时，要意识到这可能带来的心理负债。",
+                keywords: ["赠送", "回报", "关系", "营销", "社交", "感谢", "人情", "帮助", "义务"],
+                relatedModels: [49, 48]
+            },
+            {
+                id: 18,
+                name: "承诺一致性",
+                discipline: "心理学",
+                coreConcept: "一旦做出承诺，人们会努力保持行为与承诺一致，以维护自我形象和社会信誉。小承诺往往导致大行为。",
+                description: "人们希望被视为言行一致的人。当我们做出一个决定或表态后，会感受到内部和外部压力去遵守这个承诺。",
+                example: "先让客户说'我喜欢这个产品'，他们更可能购买；先签署小请愿书的人更可能参与后续大活动。",
+                application: "在说服和自我管理中，利用小承诺撬动大行为；同时要警惕被他人利用此原理操纵。",
+                keywords: ["承诺", "说服", "销售", "影响", "品牌", "行为", "一致", "信任", "信誉"],
+                relatedModels: [48, 17]
+            },
+            {
+                id: 19,
+                name: "权威偏误",
+                discipline: "心理学",
+                coreConcept: "人们过度信任权威人士的意见，即使这些意见在其专业领域之外。对权威的服从是社会化教育的结果。",
+                description: "从小的教育让我们尊重权威，但这也导致我们放弃独立思考，盲目接受专家、领导、名人的观点。",
+                example: "相信演员推荐的医疗产品；服从明显错误的上级指令；专家在非专业领域的发言被过度重视。",
+                application: "尊重专业意见，但保持批判性思维；权威观点也要经过事实和逻辑的检验。",
+                keywords: ["专家", "领导", "权威", "信任", "建议", "意见", "名人", "推荐", "服从"],
+                relatedModels: [11, 46]
+            },
+            {
+                id: 20,
+                name: "稀缺性原则",
+                discipline: "心理学",
+                coreConcept: "稀缺的东西看起来更有价值，人们害怕失去机会。'物以稀为贵'是根深蒂固的心理反应。",
+                description: "当某物变得稀缺或可能失去时，人们会赋予其更高价值。稀缺可以是数量上的（'仅剩3件'）或时间上的（'限时优惠'）。",
+                example: "\"限时24小时\"\"仅剩最后5个名额\"能激发购买冲动；收藏品的价值往往来源于稀缺而非实用。",
+                application: "在营销中强调稀缺性；在决策中要意识到稀缺感可能扭曲价值判断，理性评估真实价值。",
+                keywords: ["促销", "销售", "价值", "紧迫", "限量", "稀缺", "购买", "机会", "最后"],
+                relatedModels: [50, 13]
+            },
+            {
+                id: 21,
+                name: "框架效应",
+                discipline: "心理学",
+                coreConcept: "同样的信息以不同方式呈现时，人们的决策会完全不同。问题表述的框架影响人们对选项的评估。",
+                description: "大脑不会被动接收信息，而是会根据呈现方式解读信息。'得'的框架比'失'的框架更受欢迎，即使实质相同。",
+                example: "「90%存活率」比「10%死亡率」更让人接受手术；'节省20元'比'少付20元'更有吸引力。",
+                application: "在沟通中精心设计表达框架；在决策中要尝试用不同框架重新表述问题，避免被框架误导。",
+                keywords: ["表达", "沟通", "说服", "营销", "决策", "描述", "呈现", "选项", "说法"],
+                relatedModels: [6, 13]
+            },
+            {
+                id: 22,
+                name: "从众效应",
+                discipline: "心理学",
+                coreConcept: "人们倾向于跟随大多数人的行为和观点，尤其在不确定情境下。群体的行为被视为正确的信号。",
+                description: "从众有信息性原因（别人可能知道我们不知道的）和社会性原因（不想显得格格不入）。这种倾向在群体中会被放大。",
+                example: "餐厅人越多越想进去；股市中追涨杀跌；社交平台上的内容流行具有马太效应。",
+                application: "在营销中展示'大多数人选择'；在个人决策中，要区分跟随群体是因为信息还是盲从。",
+                keywords: ["群体", "跟风", "流行", "趋势", "社会", "压力", "选择", "模仿", "大多数"],
+                relatedModels: [57, 16]
+            },
+            {
+                id: 23,
+                name: "光环效应",
+                discipline: "心理学",
+                coreConcept: "对一个人或事物的某一特点的评价会泛化到整体。一个好的特质会让人倾向于认为其他特质也好。",
+                description: "大脑倾向于保持评价的一致性，将某一方面的印象扩展到其他方面。这导致外貌吸引力、社会地位等因素影响其他判断。",
+                example: "长得好看的人被认为更聪明、善良；名校毕业生被认为各方面都优秀；大公司的产品被认为质量都好。",
+                application: "在评估人 or 事物时，要分别评估各个维度，避免一个优点主导整体印象。",
+                keywords: ["印象", "评价", "品牌", "形象", "判断", "整体", "偏见", "影响", "泛化"],
+                relatedModels: [56, 19]
+            },
+            {
+                id: 24,
+                name: "达克效应",
+                discipline: "心理学",
+                coreConcept: "能力低的人倾向于高估自己，因为他们缺乏判断能力；能力强的人倾向于低估自己，因为他们知道还有更多不知道的。",
+                description: "无知者无畏，博学者谦卑。初学者不知道自己不知道什么，专家知道知识的边界。这导致新手过度自信，专家反而犹豫。",
+                example: "新手投资者觉得自己能战胜市场；业余爱好者认为自己和专业选手差距不大；真正的专家知道自己还有很多不懂。",
+                application: "保持谦逊，持续学习；在评估自己的能力时，要考虑是否存在认知盲区。",
+                keywords: ["能力", "认知", "学习", "成长", "评估", "自信", "谦虚", "水平", "无知"],
+                relatedModels: [58, 8]
+            },
+            {
+                id: 25,
+                name: "自证预言",
+                discipline: "心理学",
+                coreConcept: "人们的预期会影响行为，最终导致预期成为现实。信念通过行为转化为现实。",
+                description: "当我们相信某事会发生，就会以符合这个信念的方式行动，最终促成这件事的发生。积极和消极的预言都能自证。",
+                example: "老师认为学生聪明，给予更多关注和鼓励，学生真的变得更优秀；银行被认为要倒闭，储户挤兑，银行真的倒闭。",
+                application: "培养积极的预期和自我效能感；在领导和管理中，传递积极期待；警惕消极预期的自我实现。",
+                keywords: ["预期", "信心", "影响", "结果", "预言", "信念", "实现", "态度", "期望"],
+                relatedModels: [54, 16]
+            },
+
+            // ==================== 生理学 (26-30) ====================
+            {
+                id: 26,
+                name: "战或逃反应",
+                discipline: "生理学",
+                coreConcept: "面对威胁时，身体自动进入战斗或逃跑的应激状态，释放肾上腺素，心跳加速，血流向肌肉。这种原始反应在现代常被误触发。",
+                description: "这是进化的遗产，帮助祖先应对野兽威胁。但现代社会的压力源（演讲、考试、争吵）不会危及生命，却触发同样的生理反应。",
+                example: "公开演讲前心跳加速、手心出汗；与人争执时想大喊或逃跑；股市暴跌时恐慌性抛售。",
+                application: "认识到压力反应是正常的生理机制，不是软弱的表现；通过深呼吸、运动等方式调节；在重大决策前避免应激状态。",
+                keywords: ["压力", "紧张", "恐惧", "反应", "身体", "情绪", "焦虑", "威胁", "本能"],
+                relatedModels: [27, 28]
+            },
+            {
+                id: 27,
+                name: "多巴胺系统",
+                discipline: "生理学",
+                coreConcept: "多巴胺是奖励预测信号，驱动我们追求目标。它不是快乐的分子，而是欲望的分子——让我们想要，而不是满足。",
+                description: "多巴胺在预期奖励时释放，而非获得奖励后。这解释了为什么追求过程比结果更刺激，以及为什么成瘾行为难以戒除。",
+                example: "刷短视频时，期待下一个有趣的视频比看到它释放更多多巴胺；购物时，期待比实际拥有更让人兴奋。",
+                application: "理解多巴胺机制可以帮助我们设计更好的习惯系统，避免陷入追求快感的成瘾循环。",
+                keywords: ["奖励", "欲望", "动力", "快乐", "成瘾", "习惯", "目标", "满足", "追求"],
+                relatedModels: [26, 46]
+            },
+            {
+                id: 28,
+                name: "昼夜节律",
+                discipline: "生理学",
+                coreConcept: "人体有约24小时的生物钟，影响睡眠、警觉性、代谢等。顺应节律能提高效率，违背节律会损害健康。",
+                description: "生物钟受光线影响最强，在早上提升警觉性，晚上释放褪黑素。现代生活的人造光源、电子屏幕干扰了自然节律。",
+                example: "上午注意力最集中，适合处理困难任务；下午犯困是自然的生理低谷；晚上使用电子设备会延迟入睡。",
+                application: "根据个人节律安排工作和休息：将重要任务放在精力高峰期，低谷期做轻松工作，保证充足睡眠。",
+                keywords: ["睡眠", "时间", "精力", "效率", "健康", "规律", "作息", "生物钟", "节奏"],
+                relatedModels: [26, 30]
+            },
+            {
+                id: 29,
+                name: "压力与皮质醇",
+                discipline: "生理学",
+                coreConcept: "短期压力有适应作用，但长期压力导致皮质醇持续升高，损害认知、免疫和新陈代谢。",
+                description: "皮质醇是压力荷尔蒙，短期帮助应对危机，但长期高水平会导致焦虑、失眠、免疫力下降、体重增加等问题。",
+                example: "长期工作压力大的人容易生病；考前突击的焦虑损害记忆；慢性压力导致判断力下降。",
+                application: "学会压力管理技巧，通过运动、冥想、社交等方式降低皮质醇水平；避免长期处于高压状态。",
+                keywords: ["压力", "焦虑", "健康", "免疫", "情绪", "工作", "休息", "恢复", "平衡"],
+                relatedModels: [26, 27]
+            },
+            {
+                id: 30,
+                name: "习惯回路",
+                discipline: "生理学",
+                coreConcept: "习惯由提示、行为、奖励三个环节组成。大脑用习惯节省能量，好的习惯和坏的习惯遵循同样的神经机制。",
+                description: "当行为重复足够多次后，大脑将其自动化。习惯储存在基底核，不需要前额叶皮层参与，因此省力且难以改变。",
+                example: "看到手机通知（提示）→打开查看（行为）→获得信息或社交满足（奖励）→形成习惯回路。",
+                application: "要养成好习惯，需要设计清晰的提示和即时奖励；要戒除坏习惯，需要打断习惯回路或替换行为。",
+                keywords: ["习惯", "行为", "改变", "奖励", "循环", "自动化", "养成", "戒除", "习惯"],
+                relatedModels: [27, 28]
+            },
+
+            // ==================== 数学 (31-45) ====================
+            {
+                id: 31,
+                name: "复利效应",
+                discipline: "数学",
+                coreConcept: "收益产生收益，时间越长，增长越快。爱因斯坦称之为'世界第八大奇迹'。复利适用于财富、知识、习惯等多个领域。",
+                description: "复利的数学本质是指数增长：A = P(1+r)^n。增长率(r)和时间(n)是关键变量。早期增长缓慢，后期加速。",
+                example: "每年投资回报率7%，10年后本金翻倍；每天进步1%，一年后是原来的37倍；知识也有复利，新知识建立在旧知识上。",
+                application: "尽早开始投资和积累，让时间发挥作用；选择有复利效应的事（学习、健身、投资）；保持耐心，熬过早期缓慢增长期。",
+                keywords: ["投资", "增长", "时间", "积累", "财富", "学习", "习惯", "长期", "指数"],
+                relatedModels: [18, 91]
+            },
+            {
+                id: 32,
+                name: "概率思维",
+                discipline: "数学",
+                coreConcept: "世界充满了不确定性，用概率而非确定性思考，可以更准确地评估风险和做出决策。",
+                description: "大多数事情不是非黑即白的，而是存在不同程度的可能性。概率思维要求我们接受不确定性，用数字量化可能性。",
+                example: "天气预报'降水概率70%'意味着在类似气象条件下，10次有7次会下雨；医疗诊断也常常是概率性的。",
+                application: "在做决策时，评估各结果发生的概率，而不仅是最好/最坏情况；接受预测的不精确性，用概率范围而非单点预测。",
+                keywords: ["概率", "风险", "预测", "不确定性", "可能性", "判断", "决策", "评估"],
+                relatedModels: [63, 68]
+            },
+            {
+                id: 33,
+                name: "期望值",
+                discipline: "数学",
+                coreConcept: "期望值 = 概率 × 结果价值。在不确定情境下，选择期望值最高的选项，长期来看会获得最优结果。",
+                description: "期望值是概率论的核心概念，帮助我们在面对不确定性时做出理性决策。即使单次结果不确定，多次决策的平均结果趋向期望值。",
+                example: "有60%概率赚100万，40%概率亏10万，期望值 = 0.6×100 + 0.4×(-10) = 56万。",
+                application: "在投资、职业选择、重大决策中，计算各选项的期望值，选择期望值为正且最高的选项。但也要考虑风险承受能力。",
+                keywords: ["概率", "收益", "风险", "投资", "决策", "计算", "预期", "评估", "平均"],
+                relatedModels: [63, 32]
+            },
+            {
+                id: 34,
+                name: "幂律分布",
+                discipline: "数学",
+                coreConcept: "少数个体占据大部分资源或影响力，呈长尾分布。这与正态分布截然不同，是很多复杂系统的特征。",
+                description: "在幂律分布中，最大的少数个体的规模远超其他所有个体总和。城市人口、财富分布、书籍销量等都符合幂律。",
+                example: "少数城市聚集大部分人口；少数书籍贡献大部分销量；少数客户贡献大部分收入。",
+                application: "在业务中找到那关键的少数；在投资中寻找幂律分布中的大赢家；理解世界的许多现象不是正态分布。",
+                keywords: ["分布", "不平等", "集中", "长尾", "规模", "市场", "影响", "少数"],
+                relatedModels: [92, 91]
+            },
+            {
+                id: 35,
+                name: "帕累托法则",
+                discipline: "数学",
+                coreConcept: "80%的结果来自20%的原因或投入。这是幂律分布的一种表现，提醒我们关注关键少数。",
+                description: "也称为二八定律。在许多情境中，少数因素贡献大部分结果。识别这关键的20%可以极大提高效率。",
+                example: "80%的利润来自20%的客户；80%的销售额来自20%的产品；80%的成果来自20%的工作时间。",
+                application: "找出贡献最大的关键因素，优先投入资源；减少低效的80%；定期审视是否聚焦在关键事项上。",
+                keywords: ["效率", "重点", "优先", "客户", "收益", "时间", "投入", "产出", "关键"],
+                relatedModels: [91, 34]
+            },
+            {
+                id: 36,
+                name: "回归均值",
+                discipline: "数学",
+                coreConcept: "极端值之后往往会出现更接近平均值的值。这是一个统计现象，但常被误认为是因果规律。",
+                description: "当一个变量出现极端值时，下一次测量更可能接近均值，而不是继续极端。这是随机波动的自然结果。",
+                example: "股市暴涨后通常会回调；考试成绩特别好之后往往会下降；运动员特别出色的赛季后通常会回落。",
+                application: "不要过度解读极端值；在预测时要考虑均值回归；在奖励和惩罚时要意识到，极端表现后的变化可能是自然回归而非干预效果。",
+                keywords: ["平均", "回归", "极端", "正常", "波动", "统计", "预测", "趋势"],
+                relatedModels: [32, 14]
+            },
+            {
+                id: 37,
+                name: "贝叶斯定理",
+                discipline: "数学",
+                coreConcept: "根据新证据更新对假设概率的判断。这是理性学习的数学基础，也是科学推理的核心。",
+                description: "贝叶斯定理告诉我们如何在获得新信息后更新先验概率。它将概率理解为信念程度，而非客观频率。",
+                example: "医学检测阳性，实际患病的概率需要考虑检测准确率和患病率；新证据应该更新我们对假设的信心。",
+                application: "在做判断时，要考虑先验概率；获得新证据后，理性更新观点；避免忽视基础率。",
+                keywords: ["概率", "判断", "更新", "信息", "测试", "分析", "正确", "评估", "证据"],
+                relatedModels: [68, 32]
+            },
+            {
+                id: 38,
+                name: "临界点/相变",
+                discipline: "数学",
+                coreConcept: "系统从一种状态突变到另一种状态的阈值点。在临界点附近，微小的变化可能引发巨大的转变。",
+                description: "许多系统存在临界点，当参数达到某个值时，系统发生质的改变。水沸腾、雪崩、社会革命都是临界现象。",
+                example: "水温达到100度会沸腾，99度还是水；谣言传播到一定比例后会爆发；技术采用达到临界点后迅速普及。",
+                application: "识别系统的临界点，在接近临界点时保持警惕；小改变在临界点附近可以产生大影响。",
+                keywords: ["变化", "转折", "突破", "临界", "阈值", "突变", "极限", "触发"],
+                relatedModels: [83, 2]
+            },
+            {
+                id: 39,
+                name: "博弈论基础",
+                discipline: "数学",
+                coreConcept: "在决策时考虑他人的策略和反应，寻找最优策略组合。你的最优选择取决于别人的选择。",
+                description: "博弈论研究理性决策者之间的互动。纳什均衡是一个核心概念——在均衡状态下，没有人愿意单方面改变策略。",
+                example: "囚徒困境：个人理性选择导致集体非理性结果；价格战中每个企业降价是理性的，但导致全行业利润下降。",
+                application: "在竞争性情境中，要预测对手的反应并据此选择策略；识别囚徒困境，寻找合作解。",
+                keywords: ["竞争", "策略", "对手", "博弈", "决策", "合作", "游戏", "选择", "纳什"],
+                relatedModels: [69, 30]
+            },
+            {
+                id: 40,
+                name: "零和博弈vs正和博弈",
+                discipline: "数学",
+                coreConcept: "零和博弈中一方的收益等于另一方的损失；正和博弈中双方可以同时获益。识别博弈类型对策略选择至关重要。",
+                description: "零和博弈如比赛、赌博，一方赢另一方必然输。正和博弈如贸易、合作，可以创造新价值让双方都赢。",
+                example: "股票买卖是零和博弈（扣除交易成本后是负和博弈）；贸易是正和博弈，双方都获益。",
+                application: "在零和博弈中要努力赢过对手；在正和博弈中要寻找双赢方案；尽量将零和博弈转化为正和博弈。",
+                keywords: ["竞争", "合作", "双赢", "谈判", "交易", "利益", "策略", "博弈", "共赢"],
+                relatedModels: [30, 39]
+            },
+            {
+                id: 41,
+                name: "边际效应",
+                discipline: "数学",
+                coreConcept: "边际效应指增加一单位投入带来的额外产出。理性决策基于边际分析，而非总量分析。",
+                description: "经济学基本原理：人们应该比较边际收益和边际成本，而非平均收益和平均成本。当边际收益等于边际成本时达到最优。",
+                example: "再学习一小时的边际收益 vs 边际成本（疲劳）；再雇佣一个员工的边际产出 vs 边际成本（工资）。",
+                application: "在决策时问：再投入一点，能多得到什么？当边际收益小于边际成本时，停止投入。",
+                keywords: ["边际", "成本", "收益", "决策", "投入", "产出", "效率", "优化", "增量"],
+                relatedModels: [17, 32]
+            },
+            {
+                id: 42,
+                name: "大数定律",
+                discipline: "数学",
+                coreConcept: "样本量越大，样本均值越接近总体期望值。这是概率统计的基石，解释了为什么平均值得以稳定。",
+                description: "大数定律保证，当试验次数足够多时，频率会收敛到概率。这是保险公司、赌场能够稳定盈利的基础。",
+                example: "抛硬币10次可能7次正面，但抛10000次正反面比例会接近50:50；保险公司承保越多客户，赔付率越稳定。",
+                application: "小样本的结果可能充满随机性，不要过度解读；让决策基于足够大的样本；理解为什么保险公司和赌场长期必赢。",
+                keywords: ["样本", "平均", "稳定", "概率", "统计", "规模", "频率", "收敛"],
+                relatedModels: [10, 32]
+            },
+            {
+                id: 43,
+                name: "正态分布",
+                discipline: "数学",
+                coreConcept: "大多数自然现象服从钟形曲线：中间值最多，极端值很少。理解正态分布有助于认识世界的规律性。",
+                description: "正态分布是对称的钟形曲线，由均值和标准差完全决定。约68%的值在均值一个标准差内，95%在两个标准差内。",
+                example: "身高、体重、考试成绩通常服从正态分布；大多数人在中间，特别高或特别矮的人很少。",
+                application: "了解大多数人和事物在均值附近；极端值很罕见；如果数据明显偏离正态分布，值得深究原因。",
+                keywords: ["分布", "平均", "标准", "正常", "极端", "钟形", "统计", "集中"],
+                relatedModels: [32, 42]
+            },
+            {
+                id: 44,
+                name: "蝴蝶效应/敏感性",
+                discipline: "数学",
+                coreConcept: "在非线性系统中，初始条件的微小变化可能导致巨大的连锁反应。混沌理论的核心概念。",
+                description: "蝴蝶效应说明，在某些系统中，结果是初始条件的敏感函数，长期预测因此不可能。",
+                example: "蝴蝶扇动翅膀可能引发远方的风暴；蝴蝶效应在天气预报、股市、生态系统等领域都存在。",
+                application: "认识到某些系统的不可预测性；关注可能放大的关键因素；在关键节点小心行动。",
+                keywords: ["影响", "变化", "连锁", "敏感", "初始", "放大", "连锁", "细节", "非线性"],
+                relatedModels: [43, 38]
+            },
+            {
+                id: 45,
+                name: "分形理论",
+                discipline: "数学",
+                coreConcept: "复杂结构在不同尺度上呈现相似的形态。自相似性是自然界和人类社会的普遍特征。",
+                description: "分形意味着整体与部分在形状、结构上相似。海岸线从太空看和近看形状相似；股票走势在不同时间尺度上呈现相似模式。",
+                example: "树木的分叉结构从主干到小枝呈现自相似；企业的组织结构在不同层级上类似。",
+                application: "从小样本推断整体特征；将一个尺度的洞察应用到其他尺度；理解许多复杂系统的自组织特性。",
+                keywords: ["结构", "模式", "重复", "相似", "尺度", "层级", "复杂", "简单", "自相似"],
+                relatedModels: [90, 44]
+            },
+
+            // ==================== 工程学 (46-55) ====================
+            {
+                id: 46,
+                name: "冗余设计",
+                discipline: "工程学",
+                coreConcept: "在关键部分增加备份，提高系统的可靠性和抗风险能力。冗余是应对不确定性的工程智慧。",
+                description: "工程系统的失效可能导致灾难性后果，因此在关键部件上增加备份。冗余增加了成本，但大大降低了系统失效的概率。",
+                example: "飞机有多个引擎，一个坏了还能安全降落；数据中心有备用电源和多个机房；代码有多个测试用例。",
+                application: "在关键决策和系统中增加冗余——备份计划、备选方案、应急资源。权衡冗余成本与失效风险。",
+                keywords: ["风险", "备份", "安全", "可靠", "预防", "冗余", "容错", "保险", "备用"],
+                relatedModels: [41, 66]
+            },
+            {
+                id: 47,
+                name: "故障树分析",
+                discipline: "工程学",
+                coreConcept: "从可能的失效结果出发，逆向分析各层原因，找出薄弱环节。是系统化风险识别的方法。",
+                description: "故障树使用逻辑门（与、或）将顶层事件分解为底层原因，帮助识别可能导致系统失效的所有路径。",
+                example: "核电站安全分析从'堆芯熔毁'出发，分析哪些因素组合可能导致这一结果；医疗领域分析医疗事故的原因链。",
+                application: "在重大项目中，进行系统性的风险分析；识别单点失效和组合失效；制定针对性的预防措施。",
+                keywords: ["风险", "分析", "失败", "预防", "安全", "原因", "系统", "逆向"],
+                relatedModels: [74, 61]
+            },
+            {
+                id: 48,
+                name: "瓶颈理论",
+                discipline: "工程学",
+                coreConcept: "系统的产出由最薄弱的环节决定，改进其他环节不会提高整体效率。找到并打破瓶颈是提升的关键。",
+                description: "瓶颈是系统中容量最小的环节。在瓶颈之前积累的库存和在瓶颈之后的闲置资源都是浪费。",
+                example: "工厂流水线最慢的工序决定整个生产速度；软件开发中最慢的测试环节限制了整体发布节奏。",
+                application: "识别系统的瓶颈，集中资源改进瓶颈；改进瓶颈后，新的瓶颈会出现在别处，持续优化。",
+                keywords: ["效率", "改进", "优化", "生产", "流程", "限制", "瓶颈", "突破", "短板"],
+                relatedModels: [35, 41]
+            },
+            {
+                id: 49,
+                name: "模块化设计",
+                discipline: "工程学",
+                coreConcept: "将复杂系统分解为独立的模块，每个模块可独立开发、测试、替换。模块化提高了系统的灵活性和可维护性。",
+                description: "模块化通过标准化接口实现组件间的解耦。好的模块化设计降低了系统复杂度，提高了复用率和适应变化的能力。",
+                example: "乐高积木是模块化的典范；软件中的微服务架构；汽车的零部件标准化。",
+                application: "在设计系统时追求高内聚低耦合；将大问题分解为小问题；标准化接口以便未来替换和升级。",
+                keywords: ["设计", "模块", "系统", "标准化", "复用", "灵活", "解耦", "组件"],
+                relatedModels: [31, 50]
+            },
+            {
+                id: 50,
+                name: "反馈回路",
+                discipline: "工程学",
+                coreConcept: "系统的输出影响输入，形成正反馈（放大）或负反馈（稳定）循环。反馈是控制系统的核心机制。",
+                description: "正反馈让系统偏离平衡，可能导致指数增长或崩溃；负反馈让系统回归平衡，维持稳定。复杂系统往往包含多重反馈回路。",
+                example: "口碑好→更多客户→更多收入→更好服务→口碑更好（正反馈）；空调温度达到设定值后停止制冷（负反馈）。",
+                application: "在设计系统时考虑反馈机制；利用正反馈促进增长，利用负反馈维持稳定；警惕失控的正反馈循环。",
+                keywords: ["循环", "系统", "增长", "稳定", "机制", "过程", "影响", "动态", "调节"],
+                relatedModels: [33, 49]
+            },
+            {
+                id: 51,
+                name: "安全系数",
+                discipline: "工程学",
+                coreConcept: "设计的承载能力大于预期载荷，预留安全余量。这是应对未知不确定性的工程智慧。",
+                description: "工程师设计桥梁、建筑时，承载能力通常是预期载荷的几倍。安全系数考虑了材料变异、计算误差、意外载荷等因素。",
+                example: "电梯额定载重1000kg，实际安全承载可能是3000kg；桥梁设计承载是实际交通载荷的数倍。",
+                application: "在关键决策中预留安全边际；不要把预算、时间、资源规划得太紧；接受适度'过度设计'的价值。",
+                keywords: ["安全", "设计", "余量", "风险", "预防", "承载", "工程", "保守"],
+                relatedModels: [46, 66]
+            },
+            {
+                id: 52,
+                name: "逆向工程",
+                discipline: "工程学",
+                coreConcept: "从成品反推设计原理和制造过程。通过分析优秀产品来学习，而非从零开始。",
+                description: "逆向工程是一种学习方法：拆解别人的产品，理解其原理，然后创造自己的版本。这避免了重复造轮子。",
+                example: "学习编程时研究优秀的开源代码；分析竞争对手产品的设计思路；拆解成功案例找到可复制的模式。",
+                application: "在学习和创新中，先研究优秀案例的原理；但要注意避免侵犯知识产权；在理解基础上进行改进。",
+                keywords: ["学习", "分析", "拆解", "理解", "模仿", "创新", "原理", "逆向"],
+                relatedModels: [61, 31]
+            },
+            {
+                id: 53,
+                name: "迭代开发",
+                discipline: "工程学",
+                coreConcept: "通过小步快跑、持续改进的方式开发产品，而非一次性完成。每个迭代都包含设计、开发、测试、反馈。",
+                description: "迭代开发承认我们对需求和最佳方案的认识是渐进的。通过快速迭代，可以在早期发现并纠正错误。",
+                example: "软件敏捷开发：两周一个迭代，每个迭代交付可用功能；产品设计快速原型迭代。",
+                application: "不要追求一开始就完美，先做最小可行产品(MVP)；通过反馈快速学习；在迭代中持续改进。",
+                keywords: ["迭代", "开发", "改进", "反馈", "快速", "试错", "迭代", "敏捷"],
+                relatedModels: [49, 74]
+            },
+            {
+                id: 54,
+                name: "杠杆点",
+                discipline: "工程学",
+                coreConcept: "系统中存在关键点，小的干预可以产生大的影响。找到杠杆点可以实现四两拨千斤的效果。",
+                description: "杠杆点源于系统的结构和动力学特征。在杠杆点施加影响，可以被系统放大；在非杠杆点的努力往往事倍功半。",
+                example: "改变企业文化比增加人手更能提高效率；税收政策的小调整可能改变整个行业行为。",
+                application: "在改变系统时，先花时间找到杠杆点；避免在低杠杆区域浪费资源；杠杆点往往不是直觉上明显的地方。",
+                keywords: ["改变", "影响", "效率", "策略", "关键", "突破", "杠杆", "小投入大产出"],
+                relatedModels: [36, 48]
+            },
+            {
+                id: 55,
+                name: "过度工程",
+                discipline: "工程学",
+                coreConcept: "过度设计的系统往往更复杂、更昂贵、更难维护。好的工程是在可靠性和简洁性之间找到平衡。",
+                description: "过度工程是工程师的常见陷阱：为不太可能发生的情况设计，添加不必要的功能，追求不切实际的性能指标。",
+                example: "为简单功能设计复杂架构；添加用户不需要的功能；为了1%的场景增加90%的复杂度。",
+                application: "追求简单可靠的方案；区分必要的安全余量和过度的复杂设计；问'这真的需要吗？'",
+                keywords: ["过度", "设计", "复杂", "简单", "平衡", "成本", "实用", "精简"],
+                relatedModels: [51, 67]
+            },
+
+            // ==================== 生物学 (56-65) ====================
+            {
+                id: 56,
+                name: "进化论思维",
+                discipline: "生物学",
+                coreConcept: "在竞争中，适应环境的特质会被保留和传承。进化论解释了生物多样性的来源，也是理解竞争和适应的框架。",
+                description: "进化三要素：变异、选择、遗传。这一机制不仅适用于生物，也适用于思想（模因）、产品、企业等的演化。",
+                example: "市场竞争中，更适应客户需求的企业生存下来；好的创意会被传播和复制。",
+                application: "在竞争中关注适应性而非绝对实力；创造更多变异（尝试）以增加被选择的机会；学习成功者的特质。",
+                keywords: ["竞争", "适应", "演化", "生存", "市场", "淘汰", "进化", "选择", "变异"],
+                relatedModels: [76, 79]
+            },
+            {
+                id: 57,
+                name: "自然选择",
+                discipline: "生物学",
+                coreConcept: "在竞争中，适应环境的个体更容易生存和繁衍。这是进化的核心机制，也适用于商业、技术等领域。",
+                description: "自然选择是非随机的过程：环境'选择'了更适应的个体。选择的压力塑造了生物的形态和行为。",
+                example: "市场竞争中，更适应客户需求的企业生存下来；抗药性细菌的出现是自然选择的直接体现。",
+                application: "理解竞争的本质是适应性的较量；关注环境变化带来的新选择压力；不要与选择压力对抗。",
+                keywords: ["竞争", "优胜劣汰", "市场", "适应", "生存", "淘汰", "选择", "环境", "压力"],
+                relatedModels: [79, 56]
+            },
+            {
+                id: 58,
+                name: "生态位",
+                discipline: "生物学",
+                coreConcept: "每个物种都有适合自己的生存空间和角色定位。在生态位内，物种有竞争优势；离开生态位则面临激烈竞争。",
+                description: "生态位包括物理空间、资源类型、活动时间等多维度的定位。不同物种通过占据不同生态位实现共存。",
+                example: "企业找到自己的市场定位才能生存发展；个人找到自己的专业领域才能有竞争优势。",
+                application: "找到并深耕自己的生态位，而非在别人的生态位里竞争；当生态位消失时，要主动迁移。",
+                keywords: ["定位", "市场", "生存", "竞争", "专业", "差异化", "空间", "角色", "细分"],
+                relatedModels: [80, 56]
+            },
+            {
+                id: 59,
+                name: "共生与寄生",
+                discipline: "生物学",
+                coreConcept: "物种间的互动方式从互利共生到一方受益一方受害的寄生。理解关系的性质有助于处理人际和组织关系。",
+                description: "互利共生：双方都受益（如蜜蜂与花）；共栖：一方受益一方不受影响；寄生：一方受益一方受害。",
+                example: "企业间的战略合作是互利共生；利用他人资源而不回馈的行为是寄生；健康的商业生态需要更多共生。",
+                application: "在人际关系和组织合作中，追求互利共生；识别寄生关系并保护自己；构建健康的生态系统。",
+                keywords: ["合作", "关系", "互利", "伤害", "共生", "寄生", "生态", "平衡"],
+                relatedModels: [23, 40]
+            },
+            {
+                id: 60,
+                name: "适应性辐射",
+                discipline: "生物学",
+                coreConcept: "当新的机会空间出现时，物种会快速分化以占据各种生态位。这是生物多样性的重要来源。",
+                description: "适应性辐射通常发生在新的环境开放或原有竞争者消失后。一个祖先物种快速演化出多种形态，占据不同生态位。",
+                example: "恐龙灭绝后哺乳动物快速分化；互联网时代催生了各种新型企业；新技术创造了新的创业机会。",
+                application: "当新机会空间出现时，快速行动占据有利位置；多元化尝试以探索不同可能性。",
+                keywords: ["机会", "分化", "多样化", "演化", "扩张", "探索", "创新", "空白"],
+                relatedModels: [56, 38]
+            },
+            {
+                id: 61,
+                name: "生态演替",
+                discipline: "生物学",
+                coreConcept: "生态系统经历有规律的演替过程，从简单到复杂，从不稳定到稳定。理解演替规律有助于预测发展趋势。",
+                description: "生态演替分为初级（从裸地开始）和次级（从干扰后开始）。演替过程中，物种组成、结构复杂度不断变化，最终达到顶级群落。",
+                example: "创业公司如同早期演替的生态系统，快速变化；成熟公司如同顶级群落，稳定但创新减少。",
+                application: "识别系统所处的演替阶段；在早期抓住快速增长机会，在后期注重稳定和效率。",
+                keywords: ["演替", "变化", "发展", "阶段", "过程", "生态", "稳定", "成熟"],
+                relatedModels: [56, 2]
+            },
+            {
+                id: 62,
+                name: "竞争排斥原理",
+                discipline: "生物学",
+                coreConcept: "两个生态位完全重叠的物种不能长期共存，竞争会导致一方被淘汰或发生生态位分化。",
+                description: "高斯原理指出，完全的竞争者不能共存。这解释了为什么相似物种会通过演化产生差异以减少竞争。",
+                example: "市场上定位相同的两家公司必然发生激烈竞争，直到差异化或一方退出。",
+                application: "避免与强势对手在相同维度直接竞争；通过差异化寻找自己的生态位；当竞争不可避免时，提升核心竞争力。",
+                keywords: ["竞争", "差异化", "共存", "淘汰", "定位", "细分", "生存", "分化"],
+                relatedModels: [57, 58]
+            },
+            {
+                id: 63,
+                name: "营养级",
+                discipline: "生物学",
+                coreConcept: "生态系统中的能量流动呈现金字塔结构：生产者→初级消费者→次级消费者→顶级捕食者。每上升一级，能量损失约90%。",
+                description: "能量在食物链中逐级递减，这决定了生态系统结构。营养级越高，个体数量和生物量越少。",
+                example: "商业生态中也有类似层级：平台→商家→消费者；层级越高，利润空间越大，但竞争也越激烈。",
+                application: "理解自己所处的层级，找到上升或下降的机会；在商业生态中，思考自己的价值定位。",
+                keywords: ["层级", "能量", "食物链", "结构", "生态", "金字塔", "流动", "位置"],
+                relatedModels: [59, 34]
+            },
+            {
+                id: 64,
+                name: "繁衍策略：r/K选择",
+                discipline: "生物学",
+                coreConcept: "生物有两种繁衍策略：r策略（大量繁殖、低投入）和K策略（少量繁殖、高投入）。不同环境适合不同策略。",
+                description: "r策略适应不稳定环境，靠数量取胜；K策略适应稳定环境，靠质量取胜。人类是典型的K策略者。",
+                example: "初创企业可能采用r策略快速试错，成熟企业采用K策略精细运营；投资中分散投资vs集中投资。",
+                application: "根据环境稳定性选择策略：不确定环境中多尝试，稳定环境中深耕细作。",
+                keywords: ["策略", "数量", "质量", "投入", "选择", "适应", "环境", "取舍"],
+                relatedModels: [56, 64]
+            },
+            {
+                id: 65,
+                name: "病毒式传播",
+                discipline: "生物学",
+                coreConcept: "病毒通过宿主复制并传播给新宿主。这种指数增长的传播模式在信息时代更加显著。",
+                description: "病毒传播的关键指标是基本传染数R0：每个感染者平均感染多少人。R0>1时疫情会扩大，R0<1时会消退。",
+                example: "社交媒体内容的病毒式传播；谣言和假新闻的扩散；产品口碑传播。",
+                application: "在营销中设计可传播性；理解病毒传播的阈值效应；控制负面信息的传播。",
+                keywords: ["传播", "扩散", "病毒", "感染", "增长", "指数", "传播", "口碑"],
+                relatedModels: [34, 38]
+            },
+
+            // ==================== 物理学 (66-75) ====================
+            {
+                id: 66,
+                name: "杠杆原理",
+                discipline: "物理学",
+                coreConcept: "用小的力通过杠杆放大，可以撬动大的重物。杠杆原理在许多领域都有类比应用。",
+                description: "杠杆原理的关键在于支点的位置和力臂长度。在生活、投资、管理中，找到合适的杠杆可以放大努力的效果。",
+                example: "投资中的杠杆是用小资金撬动大收益；管理中的杠杆是找到影响全局的关键点；学习中的杠杆是掌握原理而非记忆事实。",
+                application: "寻找可以放大努力的杠杆——工具、系统、人脉、资本；注意杠杆是把双刃剑，风险也会被放大。",
+                keywords: ["杠杆", "放大", "效率", "撬动", "支点", "力量", "杠杆", "收益"],
+                relatedModels: [54, 51]
+            },
+            {
+                id: 67,
+                name: "惯性定律",
+                discipline: "物理学",
+                coreConcept: "物体会保持当前运动状态，除非受到外力作用。这一原理对理解个人习惯、组织变革、社会趋势都有启示。",
+                description: "惯性意味着改变需要能量。好的习惯和坏的习惯都因为惯性而持续；组织和趋势一旦形成，会自我强化。",
+                example: "成功的企业容易保持成功（好的惯性）；失败的惯性也很难打破；个人习惯的改变需要持续的外力。",
+                application: "培养好习惯，利用惯性保持；改变坏习惯，需要持续施加'外力'；在组织中，变革需要足够的推动力。",
+                keywords: ["习惯", "改变", "力量", "状态", "趋势", "阻力", "动量", "突破", "持续"],
+                relatedModels: [85, 30]
+            },
+            {
+                id: 68,
+                name: "作用力与反作用力",
+                discipline: "物理学",
+                coreConcept: "每个作用力都有大小相等、方向相反的反作用力。这一原理在人际互动、市场竞争中都有体现。",
+                description: "力是相互的。当你推墙时，墙也在推你。在系统中，任何行动都会引发反应。",
+                example: "你用力推市场，市场也会反过来影响你；对员工施加压力，员工也会产生对抗力。",
+                application: "在采取行动时，预期可能的反作用力；有时候顺水推舟比逆流而上更明智。",
+                keywords: ["影响", "反应", "对抗", "互动", "后果", "反馈", "平衡", "对抗"],
+                relatedModels: [86, 50]
+            },
+            {
+                id: 69,
+                name: "熵增原理",
+                discipline: "物理学",
+                coreConcept: "封闭系统总是趋于混乱（熵增加），需要持续投入能量才能维持秩序。这是热力学第二定律的核心。",
+                description: "熵是混乱程度的度量。房间不收拾会越来越乱；组织不管理会越来越混乱；生命需要持续消耗能量来抵抗熵增。",
+                example: "代码不维护会越来越乱；团队不管理会效率下降；知识不复习会遗忘。",
+                application: "认识到维持秩序需要持续投入；建立系统来抵抗熵增；定期'打扫'——整理房间、优化流程、更新知识。",
+                keywords: ["秩序", "混乱", "管理", "维护", "能量", "系统", "努力", "投入", "清洁"],
+                relatedModels: [77, 41]
+            },
+            {
+                id: 70,
+                name: "能量守恒",
+                discipline: "物理学",
+                coreConcept: "能量既不能被创造也不能被消灭，只能转化或转移。没有免费的午餐，获得任何东西都有代价。",
+                description: "能量守恒是物理学基本定律。在社会和经济领域，类似地，没有无中生有的收益，任何收获都有对应的成本。",
+                example: "快速致富往往意味着高风险或他人损失；高效能人士的秘密是精力的有效分配和恢复。",
+                application: "在评估机会时，问'代价是什么'；管理好个人能量，理解精力的投入和恢复。",
+                keywords: ["成本", "代价", "付出", "获得", "转换", "守恒", "平衡", "资源", "精力"],
+                relatedModels: [81, 17]
+            },
+            {
+                id: 71,
+                name: "相对论思维",
+                discipline: "物理学",
+                coreConcept: "观察者的位置和参照系会影响对事物的判断。没有绝对的正确，只有相对于特定参照系的判断。",
+                description: "相对论告诉我们，时间和空间的测量依赖于观察者的运动状态。在社会认知中，立场和视角也影响判断。",
+                example: "同一家公司，在投资者和员工眼中可能完全不同；同一事件，不同媒体的报道大相径庭。",
+                application: "在做判断时，意识到自己的参照系和偏见；尝试从不同视角看问题；理解'正确'是相对于特定框架的。",
+                keywords: ["视角", "位置", "参照", "观点", "理解", "比较", "相对", "立场", "背景"],
+                relatedModels: [87, 21]
+            },
+            {
+                id: 72,
+                name: "临界质量",
+                discipline: "物理学",
+                coreConcept: "核反应需要足够的燃料才能持续。积累到足够量级后，发生质的改变。这一概念广泛应用于各个领域。",
+                description: "在核物理中，临界质量是维持链式反应所需的最小燃料量。在商业和学习中，类似的临界点决定质变。",
+                example: "知识积累到临界点会融会贯通；用户达到临界数量后网络效应显现；练习达到临界量后技能飞跃。",
+                application: "在追求目标时，认识到临界点的存在，坚持到突破时刻；评估自己的积累是否接近临界点。",
+                keywords: ["积累", "突破", "转变", "规模", "临界", "增长", "量变", "质变", "阈值"],
+                relatedModels: [83, 38]
+            },
+            {
+                id: 73,
+                name: "测不准原理",
+                discipline: "物理学",
+                coreConcept: "无法同时精确测量粒子的位置和动量，存在根本的不确定性。这一原理启示我们：观察会影响结果，预测有极限。",
+                description: "海森堡测不准原理揭示了量子世界的根本不确定性。在复杂系统中，类似的不确定性也普遍存在。",
+                example: "市场预测越精确，对市场的影响越大，反而改变了预测结果；调查本身可能改变被调查者的行为。",
+                application: "接受某些事情的根本不确定性；认识到观察和干预会改变系统；不要追求不可能的精确预测。",
+                keywords: ["不确定", "预测", "精确", "测量", "风险", "变化", "观察", "影响", "极限"],
+                relatedModels: [88, 32]
+            },
+            {
+                id: 74,
+                name: "能量密度",
+                discipline: "物理学",
+                coreConcept: "单位体积或质量中的能量含量。能量密度决定了燃料的效率和价值。高能量密度意味着更高的效率。",
+                description: "汽油比木头能量密度高，核能比化石能源高几个数量级。在个人和组织层面，也存在类似'能量密度'的概念。",
+                example: "高能量密度的人一小时的工作产出抵得上别人一天；深度工作的产出是碎片化工作的数倍。",
+                application: "提高自己的'能量密度'——单位时间的产出；在关键时刻集中精力，创造高能量密度时刻。",
+                keywords: ["效率", "能量", "密度", "集中", "产出", "质量", "专注", "强度"],
+                relatedModels: [70, 48]
+            },
+            {
+                id: 75,
+                name: "最小作用量原理",
+                discipline: "物理学",
+                coreConcept: "自然界总是选择能量消耗最小的路径。这一原理启示我们：效率是自然的追求，人们倾向于选择省力的方式。",
+                description: "最小作用量原理是物理学的基本原理之一：光线走最短路径，物体运动走最省能的轨迹。经济活动中类似的优化普遍存在。",
+                example: "人们倾向于选择最省力的方式做事；市场经济追求效率最大化；流程优化本质是最小作用量原理的应用。",
+                application: "理解人们追求效率的本能；设计产品和服务时要降低用户的使用成本；个人成长中要善用最小阻力路径。",
+                keywords: ["效率", "优化", "简化", "节省", "选择", "路径", "方式", "自然", "阻力"],
+                relatedModels: [89, 41]
+            },
+
+            // ==================== 化学 (76-82) ====================
+            {
+                id: 76,
+                name: "催化剂效应",
+                discipline: "化学",
+                coreConcept: "催化剂加速化学反应但不被消耗。在系统中，某些因素可以加速进程而不增加成本。",
+                description: "催化剂降低反应的活化能，使原本缓慢的反应快速进行。在社会系统中，也存在类似的催化因素。",
+                example: "好的领导是团队的催化剂；正确的工具可以极大提升效率；关键信息是决策的催化剂。",
+                application: "寻找和利用催化剂来加速目标进程；自己成为团队的催化剂；识别并移除负面催化剂。",
+                keywords: ["加速", "促进", "影响", "效率", "改变", "因素", "催化剂", "推动"],
+                relatedModels: [54, 38]
+            },
+            {
+                id: 77,
+                name: "活化能",
+                discipline: "化学",
+                coreConcept: "化学反应需要克服能垒才能开始。类似地，很多事情开始时需要额外的推动力来克服初始阻力。",
+                description: "活化能是启动反应所需的最小能量。许多有价值的事情都有'活化能壁垒'——开始难，一旦开始就容易。",
+                example: "养成新习惯的初期最困难；创业初期的启动资金和团队组建；学习新技能的入门阶段。",
+                application: "认识到困难往往在开始阶段；集中资源克服活化能壁垒；一旦跨过门槛，事情会变得容易。",
+                keywords: ["启动", "开始", "阻力", "能量", "门槛", "困难", "突破", "初始"],
+                relatedModels: [76, 67]
+            },
+            {
+                id: 78,
+                name: "化学平衡",
+                discipline: "化学",
+                coreConcept: "可逆反应达到平衡时，正反应和逆反应速率相等。平衡是动态的，可以被外界条件改变。",
+                description: "勒夏特列原理指出，当系统受到干扰时，平衡会向抵抗这种干扰的方向移动。理解平衡有助于预测系统的响应。",
+                example: "市场供需平衡会因政策或技术而调整；工作与生活的平衡需要动态维护。",
+                application: "认识到平衡是动态而非静态的；理解系统会抵抗改变的倾向；在外部条件变化时重新寻找平衡点。",
+                keywords: ["平衡", "动态", "稳定", "调整", "响应", "变化", "勒夏特列", "反应"],
+                relatedModels: [50, 69]
+            },
+            {
+                id: 79,
+                name: "连锁反应",
+                discipline: "化学",
+                coreConcept: "一个反应的产物触发下一个反应，形成自持续的链条。连锁反应可以是建设性的（如核能）或破坏性的（如爆炸）。",
+                description: "连锁反应的关键是自持性：一旦启动，不需要外部能量输入就能继续。在系统中，小的触发可能导致大的连锁效应。",
+                example: "金融危机的传导；口碑传播；恐慌情绪的扩散。",
+                application: "设计正向的连锁反应机制；警惕负面连锁反应的风险；在关键节点控制连锁反应的方向。",
+                keywords: ["连锁", "触发", "扩散", "传导", "自持", "链式", "爆发", "控制"],
+                relatedModels: [38, 65]
+            },
+            {
+                id: 80,
+                name: "相变",
+                discipline: "化学",
+                coreConcept: "物质在临界点从一种状态转变为另一种状态（如水→冰、液态→气态）。类似地，系统也存在质的转变点。",
+                description: "相变过程中，物质性质发生根本改变。系统在临界点附近的行为往往与常态不同，小扰动可能引发大变化。",
+                example: "创业公司成长为成熟企业的转型；社会运动的爆发点；产品从早期采用者到大众市场的跨越。",
+                application: "识别系统接近相变的信号；在相变点附近谨慎行动；理解相变后规则会完全改变。",
+                keywords: ["转变", "临界", "质变", "状态", "相变", "阈值", "突破", "重构"],
+                relatedModels: [38, 72]
+            },
+            {
+                id: 81,
+                name: "溶液与饱和",
+                discipline: "化学",
+                coreConcept: "溶剂在一定条件下只能溶解有限量的溶质。超过饱和点后，多余溶质会析出。市场、人才等领域也存在饱和现象。",
+                description: "饱和点是温度、压力等条件的函数。改变条件可以改变饱和度。过饱和是不稳定状态，容易触发析出。",
+                example: "市场饱和后，新进入者难以生存；人才市场饱和导致薪资下降；信息过饱和导致注意力稀缺。",
+                application: "评估市场的饱和程度；在饱和市场中寻找细分机会或等待条件改变；避免过度扩张导致'析出'。",
+                keywords: ["饱和", "极限", "容量", "市场", "浓度", "溶解", "过饱和", "沉淀"],
+                relatedModels: [17, 34]
+            },
+            {
+                id: 82,
+                name: "合成与分解",
+                discipline: "化学",
+                coreConcept: "化学反应本质是键的断裂和形成，分解复杂物质，合成新物质。学习、创新也是分解与重组的过程。",
+                description: "化学通过分解了解物质组成，通过合成创造新物质。创新往往来自对现有元素的重新组合。",
+                example: "学习时分解复杂概念为简单元素；创新通过组合现有技术产生新发明；商业模式创新往往是要素重组。",
+                application: "深入理解需要分解；创新需要重组；在面对复杂问题时，分解为简单要素再重新组合。",
+                keywords: ["分解", "组合", "创新", "重组", "合成", "分析", "构成", "要素"],
+                relatedModels: [31, 49]
+            },
+
+            // ==================== 统计学 (83-88) ====================
+            {
+                id: 83,
+                name: "幸存者偏差",
+                discipline: "统计学",
+                coreConcept: "过度关注成功案例而忽略失败案例，导致对成功因素的错误归因。只有看到完整的分布，才能正确理解成功。",
+                description: "成功者更容易被看见，失败者默默消失。如果只研究成功者，会得出错误的成功法则。",
+                example: "只研究成功企业家的特质，忽略同样特质但失败的创业者；'读书无用论'的例子都是没上过学的成功者。",
+                application: "在分析成功时，要问：失败者是什么样的？他们有没有这些特质？避免被幸存者误导。",
+                keywords: ["成功", "失败", "案例", "学习", "创业", "榜样", "统计", "数据", "选择"],
+                relatedModels: [3, 34]
+            },
+            {
+                id: 84,
+                name: "相关不等于因果",
+                discipline: "统计学",
+                coreConcept: "两个变量相关并不意味着一个导致另一个。相关性可能是巧合、反向因果或共同原因造成的。",
+                description: "因果关系的建立需要排除其他可能性。混淆相关与因果是科学思维中最常见的错误之一。",
+                example: "冰淇淋销量和溺水事故相关，但不是因为吃冰淇淋导致溺水，而是因为都是夏天发生的。教育程度和收入相关，但可能都是智力导致的。",
+                application: "在看到相关性时，不要急于下因果结论；思考是否存在第三变量；通过实验或更精细的分析验证因果。",
+                keywords: ["因果", "相关", "统计", "关系", "证据", "分析", "原因", "验证"],
+                relatedModels: [32, 68]
+            },
+            {
+                id: 85,
+                name: "样本偏差",
+                discipline: "统计学",
+                coreConcept: "如果样本不是随机抽取的，结论可能有偏。样本的代表性决定了推断的有效性。",
+                description: "样本偏差来源多样：自选择偏差（问卷只有感兴趣的人回答）、覆盖偏差（某些群体无法接触）、无响应偏差等。",
+                example: "网络调查的样本是有网络且愿意回答的人；客户满意度调查的样本是愿意反馈的客户。",
+                application: "在收集信息和做判断时，问：这些信息来自谁？谁没有被听到？样本如何选择？",
+                keywords: ["样本", "偏差", "选择", "代表", "调查", "统计", "推断", "覆盖"],
+                relatedModels: [83, 42]
+            },
+            {
+                id: 86,
+                name: "显著性检验",
+                discipline: "统计学",
+                coreConcept: "判断观察到的差异是真实的还是随机波动导致的。统计显著性帮助区分信号和噪音。",
+                description: "显著性检验通过计算p值来判断结果的可信程度。通常p<0.05被认为具有统计显著性，但这只是约定俗成。",
+                example: "A/B测试中，新版本转化率高2%，这个差异是真实的还是随机波动？显著性检验给出答案。",
+                application: "在做决策时，考虑观察到的差异是否显著；区分真实的效应和随机波动；不要过度解读小样本数据。",
+                keywords: ["显著", "差异", "统计", "检验", "概率", "证据", "可信", "P值"],
+                relatedModels: [32, 42]
+            },
+            {
+                id: 87,
+                name: "基础概率忽视",
+                discipline: "统计学",
+                coreConcept: "人们往往忽视基础概率（先验概率），过度关注具体案例信息。这导致概率判断的系统性错误。",
+                description: "基础概率是总体中某事件发生的比例。贝叶斯推理告诉我们，应该将基础概率与具体证据结合。",
+                example: "某种病发病率只有0.1%，即使检测准确率99%，阳性结果真正患病的概率也不到10%。",
+                application: "在评估概率时，先了解基础概率，再根据具体信息调整。不要被具体案例迷惑而忽视大局。",
+                keywords: ["概率", "基础", "忽视", "先验", "贝叶斯", "判断", "误解", "比例"],
+                relatedModels: [37, 14]
+            },
+            {
+                id: 88,
+                name: "异常值处理",
+                discipline: "统计学",
+                coreConcept: "异常值可能是数据错误，也可能包含重要信息。如何处理异常值取决于分析目的和异常值来源。",
+                description: "异常值检测需要统计学判断和领域知识。有时异常值是关键发现（如欺诈检测），有时是噪声需要排除。",
+                example: "在分析收入数据时，少数亿万富翁会严重拉高均值；在质量控制中，异常值可能表示产品缺陷。",
+                application: "在分析数据时关注异常值，理解其来源；根据分析目的决定是排除还是保留；有时异常值本身就是重要发现。",
+                keywords: ["异常", "极端", "数据", "检测", "处理", "统计", "分析", "离群"],
+                relatedModels: [43, 34]
+            },
+
+            // ==================== 经济学 (89-100) ====================
+            {
+                id: 89,
+                name: "机会成本",
+                discipline: "经济学",
+                coreConcept: "做出一个选择时，所放弃的其他选择中最好的那个价值。机会成本是理解选择的正确方式。",
+                description: "每个选择都有代价，不是货币成本，而是放弃的其他可能。时间是最大的机会成本。",
+                example: "选择看电影的真正成本是这段时间内你能做的最有价值的事情；读研的机会成本是三年工作经验和收入。",
+                application: "在做决定时，问：我放弃了什么？这些放弃的东西价值多少？选择不是在选择A和B，而是在选择A和'B的价值'。",
+                keywords: ["选择", "决策", "时间", "价值", "投资", "成本", "放弃", "比较", "代价"],
+                relatedModels: [16, 70]
+            },
+            {
+                id: 90,
+                name: "边际效用递减",
+                discipline: "经济学",
+                coreConcept: "消费更多同一种商品带来的额外满足感会逐渐减少。第一杯水比第十杯水更有价值。",
+                description: "边际效用递减是经济学的基本规律，解释了为什么需求曲线向下倾斜，以及为什么人们会进行多样化消费。",
+                example: "第一个汉堡很满足，第五个可能带来不适；加班第一个小时效率高，第五个小时可能边际效用为负。",
+                application: "在资源分配时，考虑边际效用而非平均效用；在达到边际效用为零时停止投入；多样化投资和消费。",
+                keywords: ["消费", "满足", "价值", "享受", "产品", "数量", "需求", "饱和", "效用"],
+                relatedModels: [17, 41]
+            },
+            {
+                id: 91,
+                name: "供需法则",
+                discipline: "经济学",
+                coreConcept: "价格由供给和需求的相互作用决定。价格上涨需求下降供给增加，价格下跌则相反。",
+                description: "供需法则是市场经济的核心机制。供给曲线向上（价格越高供给越多），需求曲线向下（价格越低需求越多）。",
+                example: "稀缺商品价格高，过剩商品价格低；房价上涨时，更多开发商进入市场，供给增加。",
+                application: "在商业中理解价格形成的机制；在投资中分析供需变化对价格的影响；预测政策对供需的影响。",
+                keywords: ["价格", "市场", "交易", "商品", "稀缺", "竞争", "销售", "购买", "均衡"],
+                relatedModels: [19, 34]
+            },
+            {
+                id: 92,
+                name: "激励反应",
+                discipline: "经济学",
+                coreConcept: "人们会对激励做出反应，改变行为以获得奖励或避免惩罚。激励是理解行为的关键。",
+                description: "激励可以分为经济激励、社会激励、道德激励。好的制度设计需要正确设置激励相容。",
+                example: "税收优惠政策会改变企业的投资行为；绩效考核制度会改变员工的工作方式。",
+                application: "在制度设计时考虑激励效应；理解他人行为背后的激励结构；警惕激励带来的意外后果。",
+                keywords: ["激励", "奖励", "惩罚", "动机", "行为", "政策", "管理", "制度", "反应"],
+                relatedModels: [20, 50]
+            },
+            {
+                id: 93,
+                name: "比较优势",
+                discipline: "经济学",
+                coreConcept: "即使一个人在所有领域都不如别人，也可以通过专业化分工获益。关键是比较优势而非绝对优势。",
+                description: "比较优势解释了为什么贸易对双方都有利。每个人都有相对擅长的领域，专注于此可以实现双赢。",
+                example: "律师即使打字比秘书快，也应该专注律师工作让秘书打字，因为律师在法律服务上的优势更大。",
+                application: "找到自己的比较优势并专注；通过合作实现互利；不要试图什么都自己做得最好。",
+                keywords: ["分工", "专业", "合作", "效率", "竞争", "优势", "工作", "团队", "贸易"],
+                relatedModels: [21, 58]
+            },
+            {
+                id: 94,
+                name: "规模经济",
+                discipline: "经济学",
+                coreConcept: "生产规模扩大时，单位成本下降，效率提高。规模经济是许多行业集中化的根本原因。",
+                description: "固定成本被更大的产量分摊，采购议价能力增强，专业化程度提高，这些因素共同降低单位成本。",
+                example: "工厂产量翻倍，但固定成本不变，单位成本下降；大公司能以更低价格采购原材料。",
+                application: "在商业中考虑规模效应；在竞争分析中理解规模优势；小企业要寻找规模不敏感的细分市场。",
+                keywords: ["成本", "效率", "生产", "企业", "扩张", "竞争", "优势", "增长", "规模"],
+                relatedModels: [22, 34]
+            },
+            {
+                id: 95,
+                name: "网络效应",
+                discipline: "经济学",
+                coreConcept: "产品或服务的价值随用户数量增加而增加。网络效应创造了赢家通吃的市场结构。",
+                description: "网络效应分为直接（电话用户越多价值越大）和间接（平台用户越多吸引越多开发者）。网络效应是许多科技巨头成功的核心。",
+                example: "社交网络用户越多越有价值；操作系统的用户基数吸引更多软件开发者。",
+                application: "在创业和投资中识别网络效应的机会；理解为什么网络效应行业往往垄断；在没有网络效应的领域寻找差异化。",
+                keywords: ["用户", "平台", "产品", "增长", "价值", "社交", "互联网", "规模", "网络"],
+                relatedModels: [26, 34]
+            },
+            {
+                id: 96,
+                name: "公地悲剧",
+                discipline: "经济学",
+                coreConcept: "当资源归集体所有时，个体倾向于过度使用，导致资源枯竭。私有化或共同治理是解决方案。",
+                description: "每个个体都理性地最大化自己的利益，但集体结果是灾难性的。这是博弈论中的囚徒困境在资源管理中的体现。",
+                example: "公共牧场上的羊越来越多，最终草地被破坏；公海过度捕捞导致渔业资源枯竭。",
+                application: "在资源管理中设计合理的产权或治理机制；在组织中避免公共资源的过度使用。",
+                keywords: ["资源", "公共", "管理", "环境", "共享", "制度", "合作", "消耗", "过度"],
+                relatedModels: [23, 39]
+            },
+            {
+                id: 97,
+                name: "逆向选择",
+                discipline: "经济学",
+                coreConcept: "信息不对称导致市场充斥着质量差的商品或高风险人群。劣币驱逐良币。",
+                description: "当买方无法区分质量时，愿意成交的平均质量下降，高质量卖家退出，市场进一步恶化。",
+                example: "只有身体不好的人才愿意买医疗保险；二手车市场上好车被坏车挤出。",
+                application: "在市场交易中识别逆向选择风险；通过信号、筛选等机制缓解信息不对称。",
+                keywords: ["信息", "风险", "保险", "市场", "质量", "选择", "交易", "隐瞒", "不对称"],
+                relatedModels: [24, 28]
+            },
+            {
+                id: 98,
+                name: "道德风险",
+                discipline: "经济学",
+                coreConcept: "人们因为有保障而采取更高风险的行为。激励与风险承担不匹配导致的问题。",
+                description: "道德风险发生在代理关系中：代理人因为有委托人承担后果而采取更冒险的行为。",
+                example: "买了车险后开车更不谨慎；大银行因为有政府救助预期而从事高风险业务。",
+                application: "在委托代理关系中设计合理的激励机制；在保险和监管中防范道德风险。",
+                keywords: ["风险", "保险", "责任", "保障", "行为", "后果", "管理", "激励", "代理"],
+                relatedModels: [29, 92]
+            },
+            {
+                id: 99,
+                name: "护城河",
+                discipline: "经济学",
+                coreConcept: "企业的竞争优势能够抵御竞争对手的攻击。护城河包括品牌、网络效应、成本优势、转换成本、牌照等。",
+                description: "巴菲特强调投资有护城河的企业。护城河的宽窄决定了超额利润能持续多久。",
+                example: "可口可乐的品牌护城河；微信的网络效应护城河；航空公司的规模护城河。",
+                application: "在投资分析中评估护城河的宽窄和持久性；在企业经营中构建和维护护城河。",
+                keywords: ["竞争", "优势", "保护", "企业", "品牌", "壁垒", "投资", "防御", "持续"],
+                relatedModels: [94, 95]
+            },
+            {
+                id: 100,
+                name: "Lollapalooza效应",
+                discipline: "经济学",
+                coreConcept: "芒格原创概念：多种力量叠加产生巨大的协同效应。整体大于部分之和。",
+                description: "当多个因素同向作用时，效果不是简单相加而是相乘放大。好公司+好行业+好管理+好时机=巨大成功。",
+                example: "可口可乐同时拥有品牌护城河、规模优势、分销网络、文化影响力，这些因素相互强化。",
+                application: "在寻找机会时，寻找多种有利因素汇聚的节点；在风险分析时，警惕多种负面因素的叠加。",
+                keywords: ["协同", "叠加", "放大", "组合", "综合", "效应", "力量", "整体", "复合"],
+                relatedModels: [93, 99]
+            }
+        ];
+
+        // 十大学科列表
+        const disciplines = ['历史学', '心理学', '生理学', '数学', '工程学', '生物学', '物理学', '化学', '统计学', '经济学'];
+
+        // 分析用户输入并匹配相关模型
+        function analyzeInput() {
+            const input = document.getElementById('userInput').value.trim();
+            if (!input) {
+                alert('请输入你想分析的事情');
+                return;
+            }
+
+            // 显示加载状态
+            document.getElementById('btnText').classList.add('hidden');
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+            document.getElementById('analyzeBtn').disabled = true;
+
+            // 模拟分析延迟
+            setTimeout(() => {
+                const result = matchModels(input);
+                displayResults(input, result);
+                
+                // 恢复按钮状态
+                document.getElementById('btnText').classList.remove('hidden');
+                document.getElementById('loadingIndicator').classList.add('hidden');
+                document.getElementById('analyzeBtn').disabled = false;
+            }, 1000);
+        }
+
+        // 匹配模型 - 按10大学科维度 + 相关性排序
+        function matchModels(input) {
+            const inputLower = input.toLowerCase();
+            const modelScores = [];
+
+            // 对每个模型计算相关性分数
+            models.forEach(model => {
+                let score = 0;
+                let matchReasons = [];
+
+                // 关键词匹配
+                model.keywords.forEach(keyword => {
+                    if (inputLower.includes(keyword)) {
+                        score += 10;
+                        matchReasons.push(`关键词匹配: "${keyword}"`);
+                    }
+                });
+
+                // 语义扩展匹配
+                const semanticMatches = getSemanticMatches(inputLower, model);
+                if (semanticMatches.score > 0) {
+                    score += semanticMatches.score;
+                    matchReasons.push(...semanticMatches.reasons);
+                }
+
+                modelScores.push({
+                    model,
+                    score,
+                    matchReasons
+                });
+            });
+
+            // 按分数排序
+            modelScores.sort((a, b) => b.score - a.score);
+
+            // 分配权重（基于相对分数）
+            const maxScore = modelScores[0].score || 1;
+            modelScores.forEach(item => {
+                item.weight = Math.max(5, Math.round((item.score / maxScore) * 100));
+            });
+
+            // 筛选模型：
+            // 1. 从每个学科至少取一个最相关的模型
+            // 2. 再取额外相关的模型
+            const selectedModels = [];
+            const disciplineAdded = new Set();
+
+            // 首先从每个学科取最相关的模型
+            disciplines.forEach(discipline => {
+                const disciplineModels = modelScores.filter(m => m.model.discipline === discipline);
+                if (disciplineModels.length > 0 && disciplineModels[0].score > 0) {
+                    selectedModels.push(disciplineModels[0]);
+                    disciplineAdded.add(discipline);
+                }
+            });
+
+            // 再添加额外的相关模型（按分数）
+            modelScores.forEach(item => {
+                if (!selectedModels.find(m => m.model.id === item.model.id) && item.score > 0 && selectedModels.length < 15) {
+                    selectedModels.push(item);
+                }
+            });
+
+            // 按权重重新排序
+            selectedModels.sort((a, b) => b.weight - a.weight);
+
+            return selectedModels;
+        }
+
+        // 语义匹配扩展
+        function getSemanticMatches(input, model) {
+            let score = 0;
+            let reasons = [];
+
+            // 语义映射表
+            const semanticMap = {
+                '工作': ['决策', '能力', '团队', '管理', '效率', '习惯', '压力', '竞争'],
+                '钱': ['投资', '收益', '成本', '财富', '价格', '交易', '风险', '选择'],
+                '关系': ['社交', '人际', '沟通', '合作', '信任', '群体', '团队', '认同'],
+                '学习': ['成长', '知识', '能力', '进步', '认知', '理解', '积累', '习惯'],
+                '改变': ['变化', '调整', '适应', '转型', '决策', '选择', '习惯', '路径'],
+                '未来': ['预测', '计划', '目标', '长期', '规划', '预期', '趋势'],
+                '成功': ['目标', '竞争', '优势', '效率', '增长', '策略', '积累'],
+                '失败': ['风险', '错误', '损失', '后果', '挑战', '挫折', '概率'],
+                '创业': ['企业', '市场', '竞争', '增长', '产品', '客户', '投资', '创新', '规模'],
+                '投资': ['风险', '收益', '决策', '机会', '价值', '资产', '选择', '概率', '成本'],
+                '团队': ['群体', '合作', '管理', '组织', '协同', '沟通', '激励'],
+                '产品': ['市场', '客户', '需求', '竞争', '价值', '销售', '质量'],
+                '时间': ['长期', '规划', '决策', '机会', '效率', '资源', '习惯', '复利'],
+                '问题': ['解决', '方法', '分析', '决策', '思考', '策略', '原因'],
+                '选择': ['决策', '机会', '比较', '风险', '后果', '评估', '成本'],
+                '健康': ['压力', '睡眠', '习惯', '精力', '平衡', '身体', '恢复'],
+                '焦虑': ['压力', '风险', '不确定性', '预测', '恐惧', '情绪', '概率']
+            };
+
+            Object.keys(semanticMap).forEach(key => {
+                if (input.includes(key)) {
+                    semanticMap[key].forEach(relatedWord => {
+                        if (model.keywords.includes(relatedWord)) {
+                            score += 3;
+                            reasons.push(`语义关联: "${key}"→"${relatedWord}"`);
+                        }
+                    });
+                }
+            });
+
+            return { score, reasons };
+        }
+
+        // 显示结果
+        function displayResults(input, matchedModels) {
+            const resultsSection = document.getElementById('resultsSection');
+            const summaryStats = document.getElementById('summaryStats');
+            const modelCardsContainer = document.getElementById('modelCardsContainer');
+            const analysisContent = document.getElementById('analysisContent');
+
+            resultsSection.classList.remove('hidden');
+
+            // 显示统计摘要
+            const disciplinesUsed = [...new Set(matchedModels.map(m => m.model.discipline))];
+            const avgWeight = Math.round(matchedModels.reduce((sum, m) => sum + m.weight, 0) / matchedModels.length);
+            
+            summaryStats.innerHTML = `
+                <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20 fade-in">
+                    <div class="text-2xl font-bold text-indigo-400">${matchedModels.length}</div>
+                    <div class="text-gray-400 text-sm">推荐模型</div>
+                </div>
+                <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20 fade-in">
+                    <div class="text-2xl font-bold text-purple-400">${disciplinesUsed.length}</div>
+                    <div class="text-gray-400 text-sm">学科维度</div>
+                </div>
+                <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20 fade-in">
+                    <div class="text-2xl font-bold text-pink-400">${avgWeight}%</div>
+                    <div class="text-gray-400 text-sm">平均相关度</div>
+                </div>
+                <div class="bg-slate-800/30 rounded-xl p-4 text-center border border-indigo-900/20 fade-in">
+                    <div class="text-2xl font-bold text-cyan-400">多元</div>
+                    <div class="text-gray-400 text-sm">综合视角</div>
+                </div>
+            `;
+
+            // 按学科分组显示模型
+            const groupedByDiscipline = {};
+            matchedModels.forEach(item => {
+                const d = item.model.discipline;
+                if (!groupedByDiscipline[d]) {
+                    groupedByDiscipline[d] = [];
+                }
+                groupedByDiscipline[d].push(item);
+            });
+
+            modelCardsContainer.innerHTML = '';
+            
+            let delay = 0;
+            Object.keys(groupedByDiscipline).forEach(discipline => {
+                const color = disciplineColors[discipline];
+                const disciplineGroup = document.createElement('div');
+                disciplineGroup.className = 'fade-in';
+                disciplineGroup.style.animationDelay = `${delay * 0.1}s`;
+                delay++;
+
+                const modelsHtml = groupedByDiscipline[discipline].map(item => {
+                    const m = item.model;
+                    const w = item.weight;
+                    return `
+                        <div class="model-card bg-slate-800/50 rounded-xl p-4 border border-indigo-900/30 cursor-pointer" onclick="showModelDetail(${m.id})">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-semibold text-white">${m.name}</span>
+                                <span class="text-sm font-bold ${color.text}">${w}%</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-2 mb-3">
+                                <div class="weight-bar bg-gradient-to-r ${color.gradient} h-2 rounded-full" style="width: ${w}%"></div>
+                            </div>
+                            <p class="text-gray-400 text-sm line-clamp-2">${m.coreConcept.substring(0, 50)}...</p>
+                        </div>
+                    `;
+                }).join('');
+
+                disciplineGroup.innerHTML = `
+                    <div class="category-header ${color.bg} rounded-xl p-3 mb-4 flex items-center gap-3">
+                        <span class="text-lg font-bold ${color.text}">${discipline}</span>
+                        <span class="text-sm text-gray-400">${groupedByDiscipline[discipline].length}个模型</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        ${modelsHtml}
+                    </div>
+                `;
+
+                modelCardsContainer.appendChild(disciplineGroup);
+            });
+
+            // 生成综合分析
+            const analysis = generateAnalysis(input, matchedModels);
+            analysisContent.innerHTML = analysis;
+
+            // 滚动到结果
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 生成综合分析
+        function generateAnalysis(input, matchedModels) {
+            let analysis = '';
+            
+            analysis += `<p class="text-indigo-300 font-semibold mb-4">针对你的情况，我们从 <span class="text-white">${matchedModels.length}个思维模型</span> 进行了多元分析：</p>`;
+
+            // 按学科分组分析
+            const groupedByDiscipline = {};
+            matchedModels.forEach(item => {
+                const d = item.model.discipline;
+                if (!groupedByDiscipline[d]) {
+                    groupedByDiscipline[d] = [];
+                }
+                groupedByDiscipline[d].push(item);
+            });
+
+            Object.keys(groupedByDiscipline).forEach(discipline => {
+                const color = disciplineColors[discipline];
+                const items = groupedByDiscipline[discipline];
+                
+                analysis += `<div class="mt-4 fade-in">`;
+                analysis += `<h4 class="${color.text} font-semibold mb-2 flex items-center gap-2">`;
+                analysis += `<span class="w-2 h-2 rounded-full bg-gradient-to-r ${color.gradient}"></span>`;
+                analysis += `${discipline}视角`;
+                analysis += `</h4>`;
+                analysis += `<ul class="space-y-2 ml-4">`;
+                
+                items.slice(0, 2).forEach(item => {
+                    analysis += `<li class="text-gray-300 text-sm">
+                        <span class="${color.text} font-medium">【${item.model.name}】</span>
+                        <span class="text-gray-400">${getApplicationInsight(item.model, input)}</span>
+                    </li>`;
+                });
+                
+                analysis += `</ul></div>`;
+            });
+
+            // 行动建议
+            const topModels = matchedModels.slice(0, 5);
+            analysis += `
+                <div class="mt-6 p-4 bg-gradient-to-r from-indigo-900/30 to-purple-900/30 rounded-xl border border-indigo-800/50">
+                    <p class="text-indigo-300 font-semibold mb-3">📌 综合行动建议</p>
+                    <ul class="space-y-2 text-gray-300 text-sm">
+            `;
+            
+            topModels.slice(0, 3).forEach((item, idx) => {
+                analysis += `<li class="flex gap-2"><span class="text-indigo-400">${idx + 1}.</span>${getActionSuggestion(item.model)}</li>`;
+            });
+            
+            analysis += `</ul></div>`;
+
+            return analysis;
+        }
+
+        // 获取应用洞察
+        function getApplicationInsight(model, input) {
+            const insights = {
+                '确认偏误': '主动寻找反对意见，避免只看支持自己观点的信息',
+                '锚定效应': '警惕第一印象对决策的影响，尝试重新评估',
+                '机会成本': '考虑选择背后的放弃，评估真正付出的代价',
+                '复利效应': '从小事做起，坚持积累，时间会放大效果',
+                '第一性原理': '回归问题本质，打破常规思维',
+                '二阶思维': '考虑行动的后续影响，不只是直接结果',
+                '逆向思维': '想想如何失败，然后避免这些行为',
+                '安全边际': '为不确定性预留缓冲空间',
+                '能力圈': '确保决策在自己理解的范围内',
+                '损失厌恶': '认识到对损失的敏感度是收益的2倍，避免过度保守',
+                '帕累托法则': '找到关键的20%，它们贡献80%的结果',
+                'Lollapalooza效应': '寻找多种有利因素的汇聚点'
+            };
+            return insights[model.name] || model.application.substring(0, 60) + '...';
+        }
+
+        // 获取行动建议
+        function getActionSuggestion(model) {
+            const suggestions = {
+                '确认偏误': '列出3个反对当前决策的理由，认真评估',
+                '锚定效应': '忽略第一印象，从多个来源重新收集信息',
+                '机会成本': '写下选择后放弃的其他可能性及其价值',
+                '复利效应': '找到可以持续积累的事情，立即开始',
+                '第一性原理': '问"这件事最基本的事实是什么？"',
+                '二阶思维': '问"然后呢？后果的后果是什么？"',
+                '逆向思维': '问"怎样做一定会失败？"然后避免这些行为',
+                '安全边际': '在计划中预留20-30%的缓冲空间',
+                '能力圈': '确认决策涉及的知识是否在自己的理解范围内',
+                '损失厌恶': '客观评估风险和收益，不要被恐惧主导',
+                '帕累托法则': '找出最重要的1-2件事，优先投入资源',
+                'Lollapalooza效应': '寻找多个有利因素叠加的机会'
+            };
+            return suggestions[model.name] || `运用${model.name}重新审视当前情况`;
+        }
+
+        // 显示模型详情弹窗
+        function showModelDetail(modelId) {
+            const model = models.find(m => m.id === modelId);
+            if (!model) return;
+
+            const color = disciplineColors[model.discipline];
+            const modal = document.getElementById('modelModal');
+            const content = document.getElementById('modalContent');
+
+            content.innerHTML = `
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm px-3 py-1 rounded-full ${color.bg} ${color.text}">${model.discipline}</span>
+                        <h2 class="text-2xl font-bold text-white">${model.name}</h2>
+                    </div>
+                    <button onclick="closeModelModal()" class="text-gray-400 hover:text-white transition-colors text-2xl">&times;</button>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-indigo-300 font-semibold mb-2">📖 核心概念</h3>
+                        <p class="text-gray-300 leading-relaxed">${model.coreConcept}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-indigo-300 font-semibold mb-2">📝 详细说明</h3>
+                        <p class="text-gray-300 leading-relaxed">${model.description}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-indigo-300 font-semibold mb-2">💡 实际案例</h3>
+                        <div class="bg-slate-900/50 rounded-lg p-4 border border-slate-700">
+                            <p class="text-gray-300">${model.example}</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-indigo-300 font-semibold mb-2">🎯 应用指南</h3>
+                        <div class="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 rounded-lg p-4 border border-indigo-800/50">
+                            <p class="text-gray-300">${model.application}</p>
+                        </div>
+                    </div>
+
+                    ${model.relatedModels && model.relatedModels.length > 0 ? `
+                    <div>
+                        <h3 class="text-indigo-300 font-semibold mb-2">🔗 相关模型</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${model.relatedModels.map(id => {
+                                const related = models.find(m => m.id === id);
+                                return related ? `<span onclick="showModelDetail(${id})" class="text-sm px-3 py-1 rounded-full bg-slate-700 text-gray-300 cursor-pointer hover:bg-slate-600 transition-colors">${related.name}</span>` : '';
+                            }).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭模型详情弹窗
+        function closeModelModal() {
+            const modal = document.getElementById('modelModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('modelModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModelModal();
+            }
+        });
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModelModal();
+            }
+        });
+
+        // 显示所有模型
+        let allModelsVisible = false;
+        function toggleAllModels() {
+            const grid = document.getElementById('allModelsGrid');
+            const btn = document.getElementById('toggleBtn');
+            
+            if (allModelsVisible) {
+                grid.classList.add('hidden');
+                btn.textContent = '展开全部 ▼';
+            } else {
+                grid.classList.remove('hidden');
+                btn.textContent = '收起 ▲';
+                
+                // 填充所有模型（按学科分组）
+                if (grid.children.length === 0) {
+                    disciplines.forEach(discipline => {
+                        const color = disciplineColors[discipline];
+                        const disciplineModels = models.filter(m => m.discipline === discipline);
+                        
+                        // 添加学科标题
+                        const header = document.createElement('div');
+                        header.className = `col-span-full ${color.bg} rounded-lg p-2 mt-4 first:mt-0`;
+                        header.innerHTML = `<span class="${color.text} font-semibold">${discipline}</span><span class="text-gray-500 text-sm ml-2">(${disciplineModels.length}个模型)</span>`;
+                        grid.appendChild(header);
+                        
+                        // 添加模型
+                        disciplineModels.forEach(model => {
+                            const tag = document.createElement('div');
+                            tag.className = 'bg-slate-800/50 rounded-lg p-3 border border-indigo-900/20 hover:border-indigo-600/50 transition-colors cursor-pointer';
+                            tag.innerHTML = `
+                                <div class="font-medium text-indigo-300 text-sm">${model.id}. ${model.name}</div>
+                                <div class="text-xs text-gray-500 mt-1 line-clamp-2">${model.coreConcept.substring(0, 40)}...</div>
+                            `;
+                            tag.onclick = () => showModelDetail(model.id);
+                            grid.appendChild(tag);
+                        });
+                    });
+                }
+            }
+            allModelsVisible = !allModelsVisible;
+        }
+
+        // 支持回车键提交
+        document.getElementById('userInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                analyzeInput();
+            }
+        });
+    </script>
+</body>
+</html>
