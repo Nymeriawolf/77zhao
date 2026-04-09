@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>退休计划计算器 - 轻松规划您的财务未来</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 标题区 -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-slate-800 mb-2">🎯 退休计划计算器</h1>
+            <p class="text-slate-600">简单易用，帮您轻松规划退休生活</p>
+        </header>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+            <!-- 左侧：输入区域 -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- 基本信息 -->
+                <section class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">1</span>
+                        基本信息
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                当前年龄
+                                <span class="tooltip-trigger text-slate-400 ml-1 cursor-help" data-tip="您现在的年龄">❓</span>
+                            </label>
+                            <input type="number" id="currentAge" value="30" min="18" max="70" 
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                计划退休年龄
+                                <span class="tooltip-trigger text-slate-400 ml-1 cursor-help" data-tip="您希望退休的年龄，建议60-65岁">❓</span>
+                            </label>
+                            <input type="number" id="retireAge" value="60" min="45" max="80" 
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                初始投资金额（元）
+                                <span class="tooltip-trigger text-slate-400 ml-1 cursor-help" data-tip="您现在准备一次性投入的资金">❓</span>
+                            </label>
+                            <input type="number" id="initialAmount" value="50000" min="0" step="1000"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                每月追加投资（元）
+                                <span class="tooltip-trigger text-slate-400 ml-1 cursor-help" data-tip="每月定期投入的金额，建议根据收入情况设置">❓</span>
+                            </label>
+                            <input type="number" id="monthlyAmount" value="2000" min="0" step="100"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 退休支出规划 - 新增 -->
+                <section class="bg-white rounded-2xl shadow-lg p-6 border-2 border-green-100">
+                    <h2 class="text-xl font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-600 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">2</span>
+                        退休支出规划
+                        <span class="ml-2 text-xs bg-green-50 text-green-600 px-2 py-1 rounded-full">核心</span>
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                退休后每月支出（元）
+                                <span class="tooltip-trigger text-slate-400 ml-1 cursor-help" data-tip="退休后每月生活费，包括衣食住行、医疗等">❓</span>
+                            </label>
+                            <input type="number" id="monthlyExpense" value="5000" min="0" step="100"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                预期寿命
+                                <span class="tooltip-trigger text-slate-400 ml-1 cursor-help" data-tip="预计活到多少岁，建议设置得保守一些">❓</span>
+                            </label>
+                            <input type="number" id="lifeExpectancy" value="85" min="60" max="110" 
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                退休后投资收益率
+                                <span class="tooltip-trigger text-slate-400 ml-1 cursor-help" data-tip="退休后通常采用更保守的投资策略，收益率较低">❓</span>
+                            </label>
+                            <input type="number" id="retireReturn" value="3" min="0" max="15" step="0.5"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                            <p class="text-xs text-slate-500 mt-1">退休后建议降低风险，收益率通常低于工作期间</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                退休时是否清房贷
+                            </label>
+                            <select id="mortgageStatus" 
+                                    class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                                <option value="yes">已还清</option>
+                                <option value="no">未还清</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 支出估算提示 -->
+                    <div class="mt-4 p-4 bg-blue-50 rounded-xl">
+                        <p class="text-sm text-blue-800 font-medium mb-2">💡 支出估算参考</p>
+                        <div class="grid grid-cols-3 gap-2 text-xs text-blue-700">
+                            <div class="text-center p-2 bg-white rounded-lg">
+                                <div class="font-bold">一线城市</div>
+                                <div>¥6,000-10,000/月</div>
+                            </div>
+                            <div class="text-center p-2 bg-white rounded-lg">
+                                <div class="font-bold">二三线城市</div>
+                                <div>¥4,000-6,000/月</div>
+                            </div>
+                            <div class="text-center p-2 bg-white rounded-lg">
+                                <div class="font-bold">小城市/县城</div>
+                                <div>¥2,500-4,000/月</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 投资组合配置 -->
+                <section class="bg-white rounded-2xl shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-slate-800 flex items-center">
+                            <span class="bg-amber-100 text-amber-600 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">3</span>
+                            投资组合配置
+                        </h2>
+                        <div class="flex gap-2">
+                            <button onclick="setPreset('conservative')" 
+                                    class="preset-btn px-3 py-1.5 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                保守型
+                            </button>
+                            <button onclick="setPreset('balanced')" 
+                                    class="preset-btn px-3 py-1.5 text-sm rounded-lg bg-blue-500 text-white transition">
+                                平衡型
+                            </button>
+                            <button onclick="setPreset('aggressive')" 
+                                    class="preset-btn px-3 py-1.5 text-sm rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                                激进型
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-slate-500 mb-4">调整各类资产的投资比例，总计需等于100%</p>
+                    
+                    <!-- 资产配置滑块 -->
+                    <div class="space-y-5">
+                        <!-- 现金 -->
+                        <div class="asset-slider" data-asset="cash">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-2">💵</span>
+                                    <span class="font-medium text-slate-700">现金</span>
+                                    <span class="tooltip-trigger text-slate-400 ml-2 cursor-help text-sm" 
+                                          data-tip="货币基金、银行存款等，安全性高但收益较低">❓</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-slate-800 text-lg asset-percent">10</span>
+                                    <span class="text-slate-500">%</span>
+                                    <span class="text-xs text-slate-400 ml-2">(预期 ~2%)</span>
+                                </div>
+                            </div>
+                            <input type="range" min="0" max="100" value="10" 
+                                   class="w-full h-2 bg-amber-100 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                                   oninput="updateAsset(this, 'cash', 2)">
+                            <div class="h-1 bg-amber-200 rounded mt-1 asset-bar" style="width: 10%"></div>
+                        </div>
+
+                        <!-- 债券 -->
+                        <div class="asset-slider" data-asset="bond">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-2">📊</span>
+                                    <span class="font-medium text-slate-700">债券</span>
+                                    <span class="tooltip-trigger text-slate-400 ml-2 cursor-help text-sm" 
+                                          data-tip="国债、企业债等，风险较低，收益稳定">❓</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-slate-800 text-lg asset-percent">30</span>
+                                    <span class="text-slate-500">%</span>
+                                    <span class="text-xs text-slate-400 ml-2">(预期 ~4%)</span>
+                                </div>
+                            </div>
+                            <input type="range" min="0" max="100" value="30" 
+                                   class="w-full h-2 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                                   oninput="updateAsset(this, 'bond', 4)">
+                            <div class="h-1 bg-blue-300 rounded mt-1 asset-bar" style="width: 30%"></div>
+                        </div>
+
+                        <!-- 指数基金 -->
+                        <div class="asset-slider" data-asset="index">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-2">📈</span>
+                                    <span class="font-medium text-slate-700">指数基金</span>
+                                    <span class="tooltip-trigger text-slate-400 ml-2 cursor-help text-sm" 
+                                          data-tip="跟踪股市指数的基金，长期收益较高但波动较大">❓</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-slate-800 text-lg asset-percent">50</span>
+                                    <span class="text-slate-500">%</span>
+                                    <span class="text-xs text-slate-400 ml-2">(预期 ~8%)</span>
+                                </div>
+                            </div>
+                            <input type="range" min="0" max="100" value="50" 
+                                   class="w-full h-2 bg-green-100 rounded-lg appearance-none cursor-pointer accent-green-500"
+                                   oninput="updateAsset(this, 'index', 8)">
+                            <div class="h-1 bg-green-400 rounded mt-1 asset-bar" style="width: 50%"></div>
+                        </div>
+
+                        <!-- 黄金 -->
+                        <div class="asset-slider" data-asset="gold">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="flex items-center">
+                                    <span class="text-2xl mr-2">🥇</span>
+                                    <span class="font-medium text-slate-700">黄金</span>
+                                    <span class="tooltip-trigger text-slate-400 ml-2 cursor-help text-sm" 
+                                          data-tip="避险资产，抗通胀，但价格波动较大">❓</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="font-bold text-slate-800 text-lg asset-percent">10</span>
+                                    <span class="text-slate-500">%</span>
+                                    <span class="text-xs text-slate-400 ml-2">(预期 ~5%)</span>
+                                </div>
+                            </div>
+                            <input type="range" min="0" max="100" value="10" 
+                                   class="w-full h-2 bg-yellow-100 rounded-lg appearance-none cursor-pointer accent-yellow-500"
+                                   oninput="updateAsset(this, 'gold', 5)">
+                            <div class="h-1 bg-yellow-400 rounded mt-1 asset-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 总计显示 -->
+                    <div class="mt-6 p-4 bg-slate-50 rounded-xl">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600">配置总计</span>
+                            <div>
+                                <span id="totalPercent" class="font-bold text-xl text-green-600">100</span>
+                                <span class="text-slate-500">%</span>
+                                <span id="totalWarning" class="hidden text-red-500 text-sm ml-2">⚠️ 需等于100%</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-slate-600">组合预期年化收益</span>
+                            <span id="expectedReturn" class="font-bold text-xl text-blue-600">5.7%</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 高级选项 -->
+                <section class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-slate-800 mb-4 flex items-center">
+                        <span class="bg-purple-100 text-purple-600 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">4</span>
+                        高级选项
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="flex items-center text-sm font-medium text-slate-700 mb-1">
+                                <input type="checkbox" id="inflationAdjust" class="mr-2 w-4 h-4 text-blue-600 rounded">
+                                考虑通胀影响
+                                <span class="tooltip-trigger text-slate-400 ml-1 cursor-help" data-tip="按约2.5%通胀率调整，显示实际购买力">❓</span>
+                            </label>
+                            <p class="text-xs text-slate-500 mt-1">勾选后显示通胀调整后的实际购买力</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">
+                                预期通胀率（%）
+                            </label>
+                            <input type="number" id="inflationRate" value="2.5" min="0" max="10" step="0.1"
+                                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 计算按钮 -->
+                <button onclick="calculate()" 
+                        class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 rounded-xl shadow-lg transform hover:scale-[1.02] transition-all duration-200">
+                    📊 开始计算
+                </button>
+            </div>
+
+            <!-- 右侧：结果展示 -->
+            <div class="space-y-6">
+                <!-- 核心结论卡片 - 新增 -->
+                <section id="conclusionCard" class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg p-6 text-white">
+                    <h3 class="text-lg font-medium opacity-90 mb-2">🎯 退休可行性分析</h3>
+                    <div id="conclusionStatus" class="text-2xl font-bold mb-3">计算中...</div>
+                    <div id="conclusionDetail" class="text-sm opacity-90 space-y-2"></div>
+                </section>
+
+                <!-- 结果卡片 -->
+                <section class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
+                    <h3 class="text-lg font-medium opacity-90 mb-2">预计退休资产</h3>
+                    <div id="resultAmount" class="text-4xl font-bold mb-1">¥0</div>
+                    <p id="resultYears" class="text-sm opacity-75">投资 30 年</p>
+                    
+                    <div class="mt-6 pt-4 border-t border-white/20">
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="opacity-75">本金投入</span>
+                            <span id="totalPrincipal" class="font-medium">¥0</span>
+                        </div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="opacity-75">投资收益</span>
+                            <span id="totalProfit" class="font-medium">¥0</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="opacity-75">收益占比</span>
+                            <span id="profitPercent" class="font-medium">0%</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 资产支撑分析 - 新增 -->
+                <section id="sustainabilityCard" class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">📉 资产支撑分析</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-slate-600">退休后月支出</span>
+                            <span id="monthlyExpenseDisplay" class="font-bold text-slate-800">¥5,000</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-slate-600">资产可支撑到</span>
+                            <span id="supportAge" class="font-bold text-green-600">--岁</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                            <span class="text-slate-600">资产覆盖年限</span>
+                            <span id="supportYears" class="font-bold text-slate-800">--年</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                            <span class="text-blue-700">最早可退休年龄</span>
+                            <span id="earliestRetireAge" class="font-bold text-blue-600">--岁</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 投资组合饼图 -->
+                <section class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4">投资组合分布</h3>
+                    <canvas id="pieChart" width="200" height="200"></canvas>
+                </section>
+            </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <section class="bg-white rounded-2xl shadow-lg p-6 mt-6">
+            <h3 class="text-xl font-semibold text-slate-800 mb-4">📈 全生命周期资产曲线</h3>
+            <p class="text-sm text-slate-500 mb-4">包含退休后的资产消耗过程</p>
+            <div class="chart-container" style="height: 350px;">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </section>
+
+        <!-- 提前退休分析 - 新增 -->
+        <section id="earlyRetireSection" class="bg-white rounded-2xl shadow-lg p-6 mt-6">
+            <h3 class="text-xl font-semibold text-slate-800 mb-4">🚀 提前退休分析</h3>
+            <p class="text-sm text-slate-500 mb-4">根据您的计划退休年龄，分析不同退休时点的资产状况（绿色=可退休，红色=资产不足）</p>
+            
+            <div id="retireAnalysisGrid" class="grid md:grid-cols-5 gap-3">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div class="mt-4 p-4 bg-blue-50 rounded-xl">
+                <p class="text-sm text-blue-800">
+                    💡 <strong>提示：</strong>以您计划的退休年龄为中心，向前后推算。绿色表示可以退休，红色表示资产不足。
+                </p>
+            </div>
+        </section>
+
+        <!-- 底部说明 -->
+        <footer class="mt-8 text-center text-slate-500 text-sm">
+            <p>⚠️ 本工具仅供参考，实际投资收益可能因市场波动而有所不同</p>
+            <p class="mt-1">预期收益率基于历史数据，不构成投资建议</p>
+        </footer>
+    </div>
+
+    <!-- 工具提示 -->
+    <div id="tooltip" class="fixed hidden bg-slate-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg z-50 max-w-xs"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
