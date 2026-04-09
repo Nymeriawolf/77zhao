@@ -5,6 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>查理·芒格多元思维模型 - 智能分析助手</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 访问统计样式 -->
+    <style>
+        .visitor-stats {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 12px;
+        }
+        .stat-item {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(168, 85, 247, 0.9));
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 8px 16px;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.4);
+        }
+        .stat-icon {
+            font-size: 16px;
+        }
+        .stat-text {
+            font-size: 13px;
+            color: white;
+        }
+        .stat-number {
+            font-weight: 600;
+            font-size: 14px;
+            color: #fcd34d;
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -188,6 +226,20 @@
         </section>
     </main>
 
+    <!-- 访问统计 -->
+    <div class="visitor-stats">
+        <div class="stat-item">
+            <span class="stat-icon">👁️</span>
+            <span class="stat-text">总浏览</span>
+            <span class="stat-number" id="totalViews">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-icon">📅</span>
+            <span class="stat-text">今日</span>
+            <span class="stat-number" id="todayViews">0</span>
+        </div>
+    </div>
+
     <!-- Model Detail Modal -->
     <div id="modelModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-indigo-900/50 shadow-2xl">
@@ -206,6 +258,72 @@
     </footer>
 
     <script>
+        // 访问统计功能
+        async function initVisitorStats() {
+            const NAMESPACE = 'munger-models';
+            const TOTAL_KEY = 'total_views';
+            const TODAY_KEY = 'today_views';
+            
+            // 获取今天的日期字符串
+            function getTodayString() {
+                return new Date().toISOString().split('T')[0];
+            }
+            
+            // 获取本地存储的今日访问数据
+            function getLocalTodayData() {
+                const data = localStorage.getItem('munger_today_data');
+                if (!data) return { date: getTodayString(), count: 0 };
+                const parsed = JSON.parse(data);
+                // 如果日期不同，重置计数
+                if (parsed.date !== getTodayString()) {
+                    return { date: getTodayString(), count: 0 };
+                }
+                return parsed;
+            }
+            
+            // 保存今日访问数据到本地
+            function saveLocalTodayData(data) {
+                localStorage.setItem('munger_today_data', JSON.stringify(data));
+            }
+            
+            // 更新显示
+            function updateDisplay(total, today) {
+                document.getElementById('totalViews').textContent = total.toLocaleString();
+                document.getElementById('todayViews').textContent = today.toLocaleString();
+            }
+            
+            try {
+                // 方案1: 使用 countapi.xyz (免费API)
+                // 更新总访问量
+                const totalResponse = await fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${TOTAL_KEY}`);
+                const totalData = await totalResponse.json();
+                const totalViews = totalData.value || 0;
+                
+                // 更新今日访问量
+                const todayResponse = await fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${TODAY_KEY}-${getTodayString()}`);
+                const todayData = await todayResponse.json();
+                const todayViews = todayData.value || 0;
+                
+                updateDisplay(totalViews, todayViews);
+            } catch (error) {
+                console.log('API统计服务暂时不可用，使用本地统计');
+                
+                // 方案2: 使用本地存储作为备用
+                let totalViews = parseInt(localStorage.getItem('munger_total_views') || '0');
+                totalViews++;
+                localStorage.setItem('munger_total_views', totalViews.toString());
+                
+                const todayData = getLocalTodayData();
+                todayData.count++;
+                saveLocalTodayData(todayData);
+                
+                updateDisplay(totalViews, todayData.count);
+            }
+        }
+        
+        // 页面加载时初始化统计
+        initVisitorStats();
+        
         // 十大学科颜色配置
         const disciplineColors = {
             '历史学': { bg: 'bg-indigo-900/50', text: 'text-indigo-300', gradient: 'from-indigo-500 to-indigo-600', hex: '#6366f1' },
