@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>查理·芒格多元思维模型 - 智能分析助手</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 不蒜子访问统计 -->
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
     <!-- 访问统计样式 -->
     <style>
         .visitor-stats {
@@ -231,12 +233,12 @@
         <div class="stat-item">
             <span class="stat-icon">👁️</span>
             <span class="stat-text">总浏览</span>
-            <span class="stat-number" id="totalViews">0</span>
+            <span class="stat-number" id="busuanzi_value_site_pv">0</span>
         </div>
         <div class="stat-item">
             <span class="stat-icon">📅</span>
             <span class="stat-text">今日</span>
-            <span class="stat-number" id="todayViews">0</span>
+            <span class="stat-number" id="busuanzi_value_site_uv">0</span>
         </div>
     </div>
 
@@ -258,72 +260,6 @@
     </footer>
 
     <script>
-        // 访问统计功能
-        async function initVisitorStats() {
-            const NAMESPACE = 'munger-models';
-            const TOTAL_KEY = 'total_views';
-            const TODAY_KEY = 'today_views';
-            
-            // 获取今天的日期字符串
-            function getTodayString() {
-                return new Date().toISOString().split('T')[0];
-            }
-            
-            // 获取本地存储的今日访问数据
-            function getLocalTodayData() {
-                const data = localStorage.getItem('munger_today_data');
-                if (!data) return { date: getTodayString(), count: 0 };
-                const parsed = JSON.parse(data);
-                // 如果日期不同，重置计数
-                if (parsed.date !== getTodayString()) {
-                    return { date: getTodayString(), count: 0 };
-                }
-                return parsed;
-            }
-            
-            // 保存今日访问数据到本地
-            function saveLocalTodayData(data) {
-                localStorage.setItem('munger_today_data', JSON.stringify(data));
-            }
-            
-            // 更新显示
-            function updateDisplay(total, today) {
-                document.getElementById('totalViews').textContent = total.toLocaleString();
-                document.getElementById('todayViews').textContent = today.toLocaleString();
-            }
-            
-            try {
-                // 方案1: 使用 countapi.xyz (免费API)
-                // 更新总访问量
-                const totalResponse = await fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${TOTAL_KEY}`);
-                const totalData = await totalResponse.json();
-                const totalViews = totalData.value || 0;
-                
-                // 更新今日访问量
-                const todayResponse = await fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${TODAY_KEY}-${getTodayString()}`);
-                const todayData = await todayResponse.json();
-                const todayViews = todayData.value || 0;
-                
-                updateDisplay(totalViews, todayViews);
-            } catch (error) {
-                console.log('API统计服务暂时不可用，使用本地统计');
-                
-                // 方案2: 使用本地存储作为备用
-                let totalViews = parseInt(localStorage.getItem('munger_total_views') || '0');
-                totalViews++;
-                localStorage.setItem('munger_total_views', totalViews.toString());
-                
-                const todayData = getLocalTodayData();
-                todayData.count++;
-                saveLocalTodayData(todayData);
-                
-                updateDisplay(totalViews, todayData.count);
-            }
-        }
-        
-        // 页面加载时初始化统计
-        initVisitorStats();
-        
         // 十大学科颜色配置
         const disciplineColors = {
             '历史学': { bg: 'bg-indigo-900/50', text: 'text-indigo-300', gradient: 'from-indigo-500 to-indigo-600', hex: '#6366f1' },
