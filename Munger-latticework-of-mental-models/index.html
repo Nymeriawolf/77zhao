@@ -238,7 +238,7 @@
         <div class="stat-item">
             <span class="stat-icon">📅</span>
             <span class="stat-text">今日</span>
-            <span class="stat-number" id="busuanzi_value_site_uv">0</span>
+            <span class="stat-number" id="todayViews">0</span>
         </div>
     </div>
 
@@ -260,6 +260,34 @@
     </footer>
 
     <script>
+        // 今日浏览数统计（本地存储实现）
+        function initTodayStats() {
+            const TODAY_KEY = 'munger_today_views';
+            const DATE_KEY = 'munger_today_date';
+            
+            // 获取今天的日期字符串
+            const today = new Date().toISOString().split('T')[0];
+            
+            // 获取存储的日期和计数
+            const savedDate = localStorage.getItem(DATE_KEY);
+            let count = parseInt(localStorage.getItem(TODAY_KEY) || '0');
+            
+            // 如果是新的一天，重置计数
+            if (savedDate !== today) {
+                count = 1;
+                localStorage.setItem(DATE_KEY, today);
+            } else {
+                count++;
+            }
+            
+            // 保存并更新显示
+            localStorage.setItem(TODAY_KEY, count.toString());
+            document.getElementById('todayViews').textContent = count.toLocaleString();
+        }
+        
+        // 页面加载时初始化今日统计
+        initTodayStats();
+        
         // 十大学科颜色配置
         const disciplineColors = {
             '历史学': { bg: 'bg-indigo-900/50', text: 'text-indigo-300', gradient: 'from-indigo-500 to-indigo-600', hex: '#6366f1' },
